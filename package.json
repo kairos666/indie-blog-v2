@@ -1,0 +1,16 @@
+{
+    "name": "indie-blog-ws",
+    "version": "0.0.1",
+    "description": "personal blog (monorepo)",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kairos666/indie-blog-v2.git"
+    },
+    "author": "David Maggi",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/kairos666/indie-blog-v2/issues"
+    },
+    "homepage": "https://github.com/kairos666/indie-blog-v2#readme",
+    "workspaces": [ "./packages/*" ]
+}
