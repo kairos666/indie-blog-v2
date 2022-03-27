@@ -1,0 +1,42 @@
+@use "sass:map";
+@use "sass:math";
+
+@import "variables";
+@import "include-media-mixins";
+
+/** GLOBAL STYLES **/
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+      Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/** CUSTOM SCROLLBAR STYLES **/
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  $track-color: red;
+  $track-bg-color: #efefef;
+  $track-width: 1px;
+
+  background-color: lightcoral;
+  background: linear-gradient(90deg, lightcoral 0%, lightcoral unquote("calc(50% - #{ math.div(15px, 2) })"), red unquote("calc(50% - #{ math.div(15px, 2) })"), red unquote("calc(50% + #{ math.div(15px, 2) })"), lightcoral unquote("calc(50% + #{ math.div(15px, 2) })"), red 100%); 
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background-color: red;
+}
