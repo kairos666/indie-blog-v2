@@ -3,8 +3,3 @@ node_modules
 *-lock.*
 *.lock
 *.log
-
-/dist
-/types
-
-/packages/**/coverage
