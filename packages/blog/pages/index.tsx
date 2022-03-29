@@ -1,9 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import CreateMatchForm from '../components/elo-ratings/CreateMatchForm';
-import CreatePlayerForm from '../components/elo-ratings/CreatePlayerForm';
-import LeaderBoard from '../components/elo-ratings/LeaderBoard';
-import PlayerDetails from '../components/elo-ratings/PlayerDetails';
+import EloBoard from '../components/elo-ratings/EloBoard';
 import styles from '../styles/Home.module.scss';
 
 const Home: NextPage = () => {
@@ -17,10 +14,7 @@ const Home: NextPage = () => {
 
             <main className={styles.main}>
                 <h1 className={styles.title}>Bienvenu dans le blog de Kaïros</h1>
-                <CreateMatchForm/>
-                <CreatePlayerForm/>
-                <LeaderBoard/>
-                <PlayerDetails/>
+                <EloBoard/>
             </main>
         </div>
     )
