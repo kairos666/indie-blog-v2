@@ -1,12 +1,14 @@
 import { FC } from 'react';
 
-type CreatePlayerFormProps = {};
+type CreatePlayerFormProps = {
+    onSubmit: Function
+};
 
-const CreatePlayerForm:FC<CreatePlayerFormProps> = () => {
+const CreatePlayerForm:FC<CreatePlayerFormProps> = ({ onSubmit }) => {
     return (
-        <section>
-            Create Player Form
-        </section>
+        <form onSubmit={ evt => { evt.preventDefault(); onSubmit() } }>
+            <button type="submit">create player</button>
+        </form>
     )
 }
 

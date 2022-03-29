@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 
             <main className={styles.main}>
                 <h1 className={styles.title}>Bienvenu dans le blog de Kaïros</h1>
-                <EloBoard/>
+                <EloBoard initialRank={ 1000 } kFactor={ 32 } />
             </main>
         </div>
     )
