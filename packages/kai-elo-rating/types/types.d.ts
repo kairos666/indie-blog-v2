@@ -48,6 +48,7 @@ export declare type Player = {
     initialRank: number;
     currentRank: number;
     matches: number[];
+    meta?: any;
 };
 export declare type Match = {
     id: number;

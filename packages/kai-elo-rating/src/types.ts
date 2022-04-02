@@ -57,7 +57,8 @@ export type Player = {
     lastPlayed: number, // timestamp
     initialRank: number,
     currentRank: number,
-    matches: number[] // Match IDs
+    matches: number[], // Match IDs
+    meta?: any
 }
 
 export type Match = {
