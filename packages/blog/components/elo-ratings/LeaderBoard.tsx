@@ -26,7 +26,7 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players }) => {
                 return (
                     <li key={ player.id }>
                         <dl>
-                            <dt>player #</dt><dd>{ player.id }</dd>
+                            <dt>player</dt><dd>{ player?.meta?.name }</dd>
                             <dt>elo score</dt><dd>{ player.currentRank }</dd>
                             <dt>match played</dt><dd>{ player.matches.length }</dd>
                             <dt>last played</dt><dd>{ player.lastPlayed }</dd>

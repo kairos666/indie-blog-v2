@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
-    "kai-elo-rating": "^1.0.0",
+    "kai-elo-rating": "^1.1.0",
     "mdx-bundler": "^8.0.1",
     "next": "12.1.0",
     "react": "17.0.2",

@@ -53,14 +53,14 @@ const CreateMatchForm:FC<CreateMatchFormProps> = ({ players, onSubmit }) => {
                 <select name="player-a" id="player-a-selector" onChange={ onPlayerSelectChange('A') } required>
                     <option value="">Choose a player for player A</option>
                     {players.map(player => {
-                        return <option value={ player.id } key={ player.id } disabled={ (player.id === playerSelection[1]) }>player #{ player.id } (elo score: { player.currentRank })</option>
+                        return <option value={ player.id } key={ player.id } disabled={ (player.id === playerSelection[1]) }>{ player?.meta?.name } (player #{ player.id }, elo score: { player.currentRank })</option>
                     })}
                 </select>
                 <label htmlFor="player-b-selector">Player B</label>
                 <select name="player-b" id="player-b-selector" onChange={ onPlayerSelectChange('B') } required>
                     <option value="">Choose a player for player B</option>
                     {players.map(player => {
-                        return <option value={ player.id } key={ player.id } disabled={ (player.id === playerSelection[0]) }>player #{ player.id } (elo score: { player.currentRank })</option>
+                        return <option value={ player.id } key={ player.id } disabled={ (player.id === playerSelection[0]) }>{ player?.meta?.name } (player #{ player.id }, elo score: { player.currentRank })</option>
                     })}
                 </select>
             </fieldset>

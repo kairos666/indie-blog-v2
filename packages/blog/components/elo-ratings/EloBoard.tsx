@@ -21,11 +21,10 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         setPlayers(eloBoardBackend.current.getAllPlayers());
     }, [eloBoardBackend, setPlayers]);
 
-    const createPlayer = useCallback(() => {
+    const createPlayer = useCallback((meta:any) => {
         try {
-            const player = eloBoardBackend.current.createPlayer();
+            eloBoardBackend.current.createPlayer({ meta });
             updatePlayersRoster();
-            console.log('create player', player);
         } catch(err) {
             console.warn(err);
         }
@@ -33,9 +32,8 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
 
     const createMatch = useCallback(({ playerAId, playerBId, matchOutcome }) => {
         try {
-            const match = eloBoardBackend.current.createMatch({ playerAId, playerBId, matchOutcome });
+            eloBoardBackend.current.createMatch({ playerAId, playerBId, matchOutcome });
             updatePlayersRoster();
-            console.log('create match', match);
         } catch(err) {
             console.warn(err);
         }
