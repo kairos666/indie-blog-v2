@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import EloBoard from '../components/elo-ratings/EloBoard';
+import Link from 'next/link';
 import styles from '../styles/Home.module.scss';
 
 const Home: NextPage = () => {
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 
             <main className={styles.main}>
                 <h1 className={styles.title}>Bienvenu dans le blog de Kaïros</h1>
-                <EloBoard initialRank={ 1000 } kFactor={ 32 } />
+                <Link href='/mini-app/elo-board'><a>app de gestion de ranking elo</a></Link>
             </main>
         </div>
     )
