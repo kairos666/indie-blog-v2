@@ -4,3 +4,10 @@ $breakpoints: (
   'medium': 992px,
   'large': 1200px
 ) !default;
+
+/* DIMENSIONS - GUTTERS */
+$gutter: 1rem;
+$xs-gutter: .25 * $gutter;
+$sm-gutter: .5 * $gutter;
+$lg-gutter: 1.5 * $gutter;
+$xl-gutter: 5 * $gutter;

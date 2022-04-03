@@ -1,0 +1,52 @@
+@import "variables";
+
+.lb-CardList {
+    margin: 0;
+    padding-inline-start: 0;
+    list-style: none;
+    counter-reset: players-rank-counter;
+
+    > li {
+        counter-increment: players-rank-counter;
+        padding-inline-start: 3 * $gutter;
+        position: relative;
+
+        &:before {
+            content: "#" counter(players-rank-counter);
+            font-size: 2rem;
+            font-weight: 700;
+            position:absolute;
+            top: $gutter;
+            left:0;
+        }
+    }
+}
+
+.lb-Card {
+    padding: $gutter;
+}
+
+.lb-Card_Title {
+    margin:0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lb-Card_Score {
+    margin-inline-start:0.5rem;
+    padding:0.5rem;
+    background-color: #efefef;
+    border-radius: 0.5rem;
+
+    span {
+        margin-inline-start: 0.5rem;
+        font-size: .5em;
+    }
+}
+
+.lb-Card_Subtext {
+    margin:0;
+    font-style: italic;
+    color: #666;
+}
