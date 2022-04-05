@@ -43,7 +43,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         <article>
             <CreateMatchForm players={ players } onSubmit={ createMatch }/>
             <CreatePlayerForm onSubmit={ createPlayer }/>
-            <LeaderBoard players={ players }/>
+            <LeaderBoard players={ players } itemHeight={ 100 } />
             <PlayerDetails/>
         </article>
     )

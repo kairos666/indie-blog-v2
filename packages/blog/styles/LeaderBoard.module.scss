@@ -5,6 +5,7 @@
     padding-inline-start: 0;
     list-style: none;
     counter-reset: players-rank-counter;
+    position:relative;
 
     > li {
         counter-increment: players-rank-counter;
