@@ -4,6 +4,7 @@ import CreatePlayerForm from './CreatePlayerForm';
 import LeaderBoard from './LeaderBoard';
 import PlayerDetails from './PlayerDetails';
 import { EloRankingBoardInMemory, fixedKFactorRuleMaker } from 'kai-elo-rating';
+import AppFrame from '../ui-elements/AppFrame';
 
 type EloBoardProps = {
     initialRank: number,
@@ -40,12 +41,12 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
     }, [eloBoardBackend, updatePlayersRoster]);
 
     return (
-        <article>
+        <AppFrame desktopBreakpoint={ 1000 } actionsChildren={ <button>pouet</button> }>
             <CreateMatchForm players={ players } onSubmit={ createMatch }/>
             <CreatePlayerForm onSubmit={ createPlayer }/>
             <LeaderBoard players={ players } itemHeight={ 100 } />
             <PlayerDetails/>
-        </article>
+        </AppFrame>
     )
 }
 
