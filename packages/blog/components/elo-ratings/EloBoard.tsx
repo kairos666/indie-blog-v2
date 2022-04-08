@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef, useState } from 'react';
+import { FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import CreateMatchForm from './CreateMatchForm';
 import CreatePlayerForm from './CreatePlayerForm';
 import LeaderBoard from './LeaderBoard';
@@ -16,12 +16,15 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
     const eloBoardBackend = useRef(new EloRankingBoardInMemory(initialRank, fixedKFactorRuleMaker(kFactor)));
     // players roster collection
     const [players, setPlayers] = useState(eloBoardBackend.current.getAllPlayers());
+    // modals/drawer state (null if closed)
+    const [modalElement, setModalElement] = useState((null as ReactNode|null))
 
-    /* callbacks */
+    /************** callbacks *************/
     const updatePlayersRoster = useCallback(() => {
         setPlayers(eloBoardBackend.current.getAllPlayers());
     }, [eloBoardBackend, setPlayers]);
 
+    // player handling
     const createPlayer = useCallback((meta:any) => {
         try {
             eloBoardBackend.current.createPlayer({ meta });
@@ -31,6 +34,11 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         }
     }, [eloBoardBackend, updatePlayersRoster]);
 
+    const createPlayerTriggerCb = useCallback(() => {
+        setModalElement(<CreatePlayerForm onSubmit={ createPlayer }/>);
+    }, [createPlayer]);
+
+    // match handling
     const createMatch = useCallback(({ playerAId, playerBId, matchOutcome }) => {
         try {
             eloBoardBackend.current.createMatch({ playerAId, playerBId, matchOutcome });
@@ -40,10 +48,19 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         }
     }, [eloBoardBackend, updatePlayersRoster]);
 
+    const createMatchTriggerCb = useCallback(() => {
+        setModalElement(<CreateMatchForm players={ players } onSubmit={ createMatch }/>);
+    }, [players, createMatch]);
+
+    /************** pre render data *************/
+    const appFrameProps = useMemo(() => ({
+        desktopBreakpoint: 1000, // breakpoint switch between mobile / desktop RWD style
+        actionsChildren: <ActionMenu createPlayerTriggerCb={ createPlayerTriggerCb } createMatchTriggerCb={ createMatchTriggerCb } />,
+        modal: modalElement
+    }), [modalElement, createPlayerTriggerCb, createMatchTriggerCb]);
+
     return (
-        <AppFrame desktopBreakpoint={ 1000 } actionsChildren={ <button>pouet</button> }>
-            <CreateMatchForm players={ players } onSubmit={ createMatch }/>
-            <CreatePlayerForm onSubmit={ createPlayer }/>
+        <AppFrame {...appFrameProps}>
             <LeaderBoard players={ players } itemHeight={ 100 } />
             <PlayerDetails/>
         </AppFrame>
@@ -51,3 +68,18 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
 }
 
 export default EloBoard;
+
+type ActionMenuProps = {
+    createPlayerTriggerCb: () => void,
+    createMatchTriggerCb: () => void
+};
+
+/* sub components */
+const ActionMenu:FC<ActionMenuProps> = ({ createPlayerTriggerCb, createMatchTriggerCb }) => {
+    return (
+        <>
+            <button type="button" onClick={ createPlayerTriggerCb }>create player</button>
+            <button type="button" onClick={ createMatchTriggerCb }>create match</button>
+        </>
+    )
+}

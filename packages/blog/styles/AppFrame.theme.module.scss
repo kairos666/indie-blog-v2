@@ -1,0 +1,69 @@
+@import "variables";
+
+.apf-AppFrame {
+    
+}
+
+.apf-AppFrame_Content {
+    
+}
+
+.apf-AppFrame_ActionMenu {
+    background-color: $app-bg-color;
+
+    button {
+        border: none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: $app-accent-color;
+        transition: background-color .3s ease, color .3s ease;
+
+        &:hover, &:focus, &:active {
+            font-size: 1.5rem;
+            color: white;
+            background-color: $app-accent-color;
+        }
+    }
+
+    &.apf-AppFrame_ActionMenu--desktop {
+        box-shadow: $app-box-shadow;
+        display:flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: $gutter;
+        padding-inline: $gutter;
+
+        button { 
+            border:1px solid $app-accent-color;
+            border-radius: 3px;
+            padding: $xs-gutter $gutter; 
+        }
+    }
+
+    &.apf-AppFrame_ActionMenu--mobile {
+        box-shadow: $app-box-shadow;
+        display:flex;
+        align-items: stretch;
+        justify-content: stretch;
+        border-top:1px solid $app-shadow-color;
+
+        > * { flex:1 1 auto; }
+        button + button { border-left:1px solid $app-shadow-color; }
+    }
+}
+
+.apf-AppFrame_Modal {
+    background-color: $app-bg-color;
+    box-shadow: $app-box-shadow;
+    padding: $gutter;
+
+    &.apf-AppFrame_Modal--desktop {
+        
+    }
+
+    &.apf-AppFrame_Modal--mobile {
+        
+    }
+}
