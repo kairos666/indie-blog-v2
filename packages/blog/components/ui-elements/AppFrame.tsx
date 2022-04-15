@@ -24,24 +24,66 @@ const mobileModalTransitionProperties = {
 // !!! to smoothly switch between both types of transition they must have complete transform overlap (scale & translate3d)
 
 type AppFrameProps = {
-    desktopBreakpoint: number,
-    modal: ReactNode|null,
-    actionsChildren?: ReactNode,
+    desktopBreakpoint: number
 };
 
-const AppFrame:FC<AppFrameProps> = ({ desktopBreakpoint, modal, actionsChildren, children }) => {
+const AppFrame:FC<AppFrameProps> = ({ desktopBreakpoint, children }) => {
     const isDesktop = useBreakpointMatcher(windowWidth => desktopBreakpoint <= windowWidth);
-    const hasActionMenu = Children.count(actionsChildren) !== 0;
 
-    const modalTransition = useTransition(modal, isDesktop ? desktopModalTransitionProperties : mobileModalTransitionProperties);
+    // each time children chang, rerender with separating children accordingly
+    let actionMenu:ReactNode[] = [];
+    let detailModal:ReactNode[] = [];
+    let regularChildren:ReactNode[] = [];
+    Children.forEach(children, (child:ReactNode) => {
+        switch(true) {
+            // group all ActionMenu together
+            case ((child as any)?.type?.name === 'ActionMenu'): actionMenu.push(child); break;
+            // group all Detail together
+            case ((child as any)?.type?.name === 'Detail'): detailModal.push(child); break;
+            // group all other children together
+            default:
+                regularChildren.push(child);
+        }
+    });
+
+    // detect wrong usage (0-1 ActionMenu, 0-1 Detail)
+    if(actionMenu.length > 1) throw new Error('AppFrame support only one <ActionMenu> component');
+    if(detailModal.length > 1) throw new Error('AppFrame support only one <Detail> component');
+
+    // detect which use case for this cycle
+    const hasActionMenu = (actionMenu.length > 0);
+
+    /** start - CSS classes aggegators **/
+    const mainClasses = [
+        coreStyle['apf-AppFrame'], 
+        hasActionMenu ? coreStyle['apf-AppFrame--has-action-menu'] : coreStyle['apf-AppFrame--no-action-menu'], 
+        isDesktop ? coreStyle['apf-AppFrame--desktop'] : coreStyle['apf-AppFrame--mobile']
+    ].join(' ');
+
+    const actionMenuClasses = [
+        coreStyle['apf-AppFrame_ActionMenu'],
+        themeStyle['apf-AppFrame_ActionMenu'],
+        isDesktop ? themeStyle['apf-AppFrame_ActionMenu--desktop'] : themeStyle['apf-AppFrame_ActionMenu--mobile']
+    ].join(' ');
+
+    const detailClasses = [
+        coreStyle['apf-AppFrame_Modal'],
+        isDesktop ? coreStyle['apf-AppFrame_Modal--desktop'] : coreStyle['apf-AppFrame_Modal--mobile'],
+        themeStyle['apf-AppFrame_Modal'],
+        isDesktop ? themeStyle['apf-AppFrame_Modal--desktop'] : themeStyle['apf-AppFrame_Modal--mobile']
+    ].join(' ');
+    /** end - CSS classes aggegators **/
+
+    // apply correct transition
+    const modalTransition = useTransition(detailModal, isDesktop ? desktopModalTransitionProperties : mobileModalTransitionProperties);
 
     return (
-        <main className={ `${ coreStyle['apf-AppFrame'] } ${ hasActionMenu ? coreStyle['apf-AppFrame--has-action-menu'] : coreStyle['apf-AppFrame--no-action-menu'] } ${ isDesktop ? coreStyle['apf-AppFrame--desktop'] : coreStyle['apf-AppFrame--mobile'] }` }>
-            <div className={ coreStyle['apf-AppFrame_Content'] }>{ children }</div>
-            { hasActionMenu ? <menu className={ `${ coreStyle['apf-AppFrame_ActionMenu'] } ${ themeStyle['apf-AppFrame_ActionMenu'] } ${ isDesktop ? themeStyle['apf-AppFrame_ActionMenu--desktop'] : themeStyle['apf-AppFrame_ActionMenu--mobile'] }` }>{ actionsChildren }</menu> : null }
-            {modalTransition((style, modal) => 
-                <animated.aside style={ style } className={ `${ coreStyle['apf-AppFrame_Modal'] } ${ isDesktop ? coreStyle['apf-AppFrame_Modal--desktop'] : coreStyle['apf-AppFrame_Modal--mobile'] } ${ themeStyle['apf-AppFrame_Modal'] } ${ isDesktop ? themeStyle['apf-AppFrame_Modal--desktop'] : themeStyle['apf-AppFrame_Modal--mobile'] }` }>
-                    { modal }
+        <main className={ mainClasses }>
+            <div className={ coreStyle['apf-AppFrame_Content'] }>{ regularChildren }</div>
+            { hasActionMenu ? <menu className={ actionMenuClasses }>{ actionMenu }</menu> : null }
+            {modalTransition((style, detailModal) => 
+                <animated.aside style={ style } className={ detailClasses }>
+                    { detailModal }
                 </animated.aside>
             )}
         </main>
@@ -49,3 +91,22 @@ const AppFrame:FC<AppFrameProps> = ({ desktopBreakpoint, modal, actionsChildren,
 }
 
 export default AppFrame;
+
+/**
+ * ACTION MENU
+ * acts has header on desktop
+ * act has tab menu on mobile bottom of screen
+ */
+type ActionMenuProps = {}
+
+export const ActionMenu:FC<ActionMenuProps> = ({ children }) => <>{ children }</>
+
+/**
+ * DETAIL
+ * display details in MASTER/DETAIL UI behavior
+ * acts as side drawer on dektop
+ * acts as modal window on mobile
+ */
+ type DetailProps = {}
+
+ export const Detail:FC<DetailProps> = ({ children }) => <>{ children }</>
