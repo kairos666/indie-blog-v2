@@ -1,8 +1,8 @@
 import { FC, ReactNode, Children } from 'react';
 import { useBreakpointMatcher } from '../../hooks/useBreakpointMatcher';
 import { useTransition, animated } from '@react-spring/web';
-import coreStyle from '../../styles/AppFrame.core.module.scss';
-import themeStyle from '../../styles/AppFrame.theme.module.scss';
+import coreStyle from './AppFrame.core.module.scss';
+import themeStyle from './AppFrame.theme.module.scss';
 
 // right side drawer animation
 const desktopModalTransitionProperties = {

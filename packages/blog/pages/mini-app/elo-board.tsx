@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import EloBoard from '../../components/elo-ratings/EloBoard';
-import styles from '../../styles/EloBoardPage.module.scss';
+import styles from '../../styles/page-layouts/EloBoardPage.module.scss';
 
 const EloBoardApp: NextPage = () => {
     return (

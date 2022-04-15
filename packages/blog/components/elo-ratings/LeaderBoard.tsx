@@ -1,5 +1,5 @@
 import { Player } from 'kai-elo-rating/types/types';
-import styles from '../../styles/LeaderBoard.module.scss';
+import styles from './LeaderBoard.module.scss';
 import { FC } from 'react';
 import { useTransition, animated } from '@react-spring/web';
 
@@ -9,11 +9,6 @@ type LeaderBoardProps = {
 };
 
 const LeaderBoard:FC<LeaderBoardProps> = ({ players, itemHeight }) => {
-    // empty roster case
-    if(!players || players.length === 0) return (
-        <p>empty leader board, register players first</p>
-    )
-
     // list height (all items have the same height)
     const listHeight = itemHeight * players.length;
 
@@ -36,6 +31,11 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players, itemHeight }) => {
             update: (extendedPlayer:any) => ({ y: extendedPlayer.y })
         }
     );
+    
+    // empty roster case
+    if(!players || players.length === 0) return (
+        <p>empty leader board, register players first</p>
+    )
 
     // nominal case with players in roster
     return (
