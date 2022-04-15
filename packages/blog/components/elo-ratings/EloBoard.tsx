@@ -4,7 +4,7 @@ import CreatePlayerForm from './CreatePlayerForm';
 import LeaderBoard from './LeaderBoard';
 import PlayerDetails from './PlayerDetails';
 import { EloRankingBoardInMemory, fixedKFactorRuleMaker } from 'kai-elo-rating';
-import AppFrame from '../ui-elements/AppFrame';
+import AppFrame, { ActionMenu, Detail } from '../ui-elements/AppFrame';
 
 type EloBoardProps = {
     initialRank: number,
@@ -52,34 +52,17 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         setModalElement(<CreateMatchForm players={ players } onSubmit={ createMatch }/>);
     }, [players, createMatch]);
 
-    /************** pre render data *************/
-    const appFrameProps = useMemo(() => ({
-        desktopBreakpoint: 1000, // breakpoint switch between mobile / desktop RWD style
-        actionsChildren: <ActionMenu createPlayerTriggerCb={ createPlayerTriggerCb } createMatchTriggerCb={ createMatchTriggerCb } />,
-        modal: modalElement
-    }), [modalElement, createPlayerTriggerCb, createMatchTriggerCb]);
-
     return (
-        <AppFrame {...appFrameProps}>
+        <AppFrame desktopBreakpoint={ 1000 }>
+            <ActionMenu>
+                <button type="button" onClick={ createPlayerTriggerCb }>create player</button>
+                <button type="button" onClick={ createMatchTriggerCb }>create match</button>
+            </ActionMenu>
             <LeaderBoard players={ players } itemHeight={ 100 } />
             <PlayerDetails/>
+            { modalElement ? <Detail>{ modalElement }</Detail> : null }
         </AppFrame>
     )
 }
 
 export default EloBoard;
-
-type ActionMenuProps = {
-    createPlayerTriggerCb: () => void,
-    createMatchTriggerCb: () => void
-};
-
-/* sub components */
-const ActionMenu:FC<ActionMenuProps> = ({ createPlayerTriggerCb, createMatchTriggerCb }) => {
-    return (
-        <>
-            <button type="button" onClick={ createPlayerTriggerCb }>create player</button>
-            <button type="button" onClick={ createMatchTriggerCb }>create match</button>
-        </>
-    )
-}
