@@ -24,6 +24,11 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         setPlayers(eloBoardBackend.current.getAllPlayers());
     }, [eloBoardBackend, setPlayers]);
 
+    // cancel modal
+    const cancelModal = useCallback(() => {
+        setModalElement(null);
+    }, []);
+
     // player handling
     const createPlayer = useCallback((meta:any) => {
         try {
@@ -35,7 +40,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
     }, [eloBoardBackend, updatePlayersRoster]);
 
     const createPlayerTriggerCb = useCallback(() => {
-        setModalElement(<CreatePlayerForm onSubmit={ createPlayer }/>);
+        setModalElement(<CreatePlayerForm onSubmit={ createPlayer } onCancel={ cancelModal }/>);
     }, [createPlayer]);
 
     // match handling
