@@ -51,3 +51,19 @@
     font-style: italic;
     color: #666;
 }
+
+.lb-EmptyList {
+    margin:$xl-gutter auto;
+    width: 75vw;
+    text-align: center;
+}
+
+.lb-EmptyList_StarterSteps {
+    margin: 0;
+    padding-inline-start: 0;
+    list-style: none;
+
+    > li {
+        padding-block-start: $lg-gutter;
+    }
+}

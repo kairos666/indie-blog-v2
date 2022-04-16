@@ -55,11 +55,10 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
     return (
         <AppFrame desktopBreakpoint={ 1000 }>
             <ActionMenu>
-                <button type="button" onClick={ createPlayerTriggerCb }>create player</button>
-                <button type="button" onClick={ createMatchTriggerCb }>create match</button>
+                <button type="button" onClick={ createPlayerTriggerCb }>Ajouter un joueur</button>
+                <button type="button" onClick={ createMatchTriggerCb }>Ajouter un match</button>
             </ActionMenu>
             <LeaderBoard players={ players } itemHeight={ 100 } />
-            <PlayerDetails/>
             { modalElement ? <Detail>{ modalElement }</Detail> : null }
         </AppFrame>
     )

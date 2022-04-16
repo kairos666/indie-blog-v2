@@ -34,7 +34,15 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players, itemHeight }) => {
     
     // empty roster case
     if(!players || players.length === 0) return (
-        <p>empty leader board, register players first</p>
+        <aside className={ styles["lb-EmptyList"] }>
+            <h1>Aucun participant enregistré</h1>
+            <img src="/svg/undraw_handcrafts_cat.svg" width="150" height="150" />
+            <ol className={ styles["lb-EmptyList_StarterSteps"] }>
+                <li>Pour commencer, cliquez sur <strong>ajouter un joueur</strong> pour créer votre liste de participants</li>
+                <li>Ensuite, cliquez sur <strong>ajouter un match</strong> pour créer un match entre vos participants</li>
+                <li>Et voilà, à chaque fois qu'un nouveaux match entre participants est enregistré, leur score ELO est modifié en conséquence et le classement des participants évolue</li>
+            </ol>
+        </aside>
     )
 
     // nominal case with players in roster
