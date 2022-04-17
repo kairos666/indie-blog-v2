@@ -1,0 +1,14 @@
+@import "variables";
+@import "mixins";
+
+.cpf-ModalTitle {
+    @include ModalTitle;
+}
+
+.cpf-Form {
+    @include GenericFormStyles;
+}
+
+.cpf-ModalActions {
+    @include ModalActions;
+}
