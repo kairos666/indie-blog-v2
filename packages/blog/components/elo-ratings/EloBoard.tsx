@@ -54,7 +54,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
     }, [eloBoardBackend, updatePlayersRoster]);
 
     const createMatchTriggerCb = useCallback(() => {
-        setModalElement(<CreateMatchForm players={ players } onSubmit={ createMatch }/>);
+        setModalElement(<CreateMatchForm players={ players } onSubmit={ createMatch } onCancel={ cancelModal }/>);
     }, [players, createMatch]);
 
     return (
