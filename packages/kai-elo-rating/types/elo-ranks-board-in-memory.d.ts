@@ -14,6 +14,7 @@ export declare class EloRankingBoard extends AEloRankingBoard {
         lastPlayed: number;
         initialRank: number;
         currentRank: number;
+        meta?: any;
     } | null;
     getAllPlayers(): {
         id: number;
@@ -22,6 +23,7 @@ export declare class EloRankingBoard extends AEloRankingBoard {
         initialRank: number;
         currentRank: number;
         matches: number[];
+        meta?: any;
     }[];
     getAllMatches(): {
         id: number;

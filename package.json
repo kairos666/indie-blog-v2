@@ -12,5 +12,6 @@
         "url": "https://github.com/kairos666/indie-blog-v2/issues"
     },
     "homepage": "https://github.com/kairos666/indie-blog-v2#readme",
+    "private": true,
     "workspaces": [ "./packages/*" ]
 }

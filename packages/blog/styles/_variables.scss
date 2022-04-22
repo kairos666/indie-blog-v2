@@ -4,3 +4,19 @@ $breakpoints: (
   'medium': 992px,
   'large': 1200px
 ) !default;
+
+/* DIMENSIONS - GUTTERS */
+$gutter: 1rem;
+$xs-gutter: .25 * $gutter;
+$sm-gutter: .5 * $gutter;
+$lg-gutter: 1.5 * $gutter;
+$xl-gutter: 5 * $gutter;
+
+/* APP FRAME */
+$app-accent-color: teal;
+$app-bg-color: #f9f9f9;
+$app-shadow-color: rgba(204,204,204,0.5);
+$app-box-shadow: 0px 0px 10px 2px $app-shadow-color;
+$app-action-menu-height: 4rem;
+$app-drawer-width: 40vw;
+$app-modal-gutter: $gutter;

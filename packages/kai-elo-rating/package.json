@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "name": "kai-elo-rating",
     "umd:name": "kaiEloRating",
     "description": "simple elo rating system implementation",

@@ -1,0 +1,18 @@
+@import "variables";
+@import "mixins";
+
+.cmf-ModalTitle {
+    @include ModalTitle;
+}
+
+.cmf-Form {
+    @include GenericFormStyles;
+}
+
+.cmf-Form_RadioGroup {
+    @include RadioGroupStyles;
+}
+
+.cmf-ModalActions {
+    @include ModalActions;
+}

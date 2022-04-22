@@ -1,0 +1,69 @@
+@import "variables";
+
+.apf-AppFrame {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "content";
+
+    &.apf-AppFrame--has-action-menu {
+        &.apf-AppFrame--desktop {
+            grid-template-rows: $app-action-menu-height auto;
+            grid-template-areas: 
+                "action-menu"
+                "content";
+        }
+        &.apf-AppFrame--mobile {
+            grid-template-rows: auto $app-action-menu-height;
+            grid-template-areas: 
+                "content"
+                "action-menu";
+        }
+    }
+
+    &.apf-AppFrame--no-action-menu {
+        content: none; // useless property but shouldn't be empty in order to write class
+    }
+}
+
+.apf-AppFrame_Content {
+    grid-area: content;
+    overflow: auto;
+}
+
+.apf-AppFrame_ActionMenu {
+    position:relative;
+    z-index: 3000;
+    grid-area: action-menu;
+    padding-inline-start: 0;
+    margin:0;
+}
+
+.apf-AppFrame_Modal {
+    position:fixed;
+    z-index: 2000;
+
+    // drawer
+    &.apf-AppFrame_Modal--desktop {
+        inset: $app-action-menu-height 0 0 auto;
+        width: $app-drawer-width;
+
+        // adjust for tool bar at the top
+        [class*="apf-AppFrame--no-action-menu"] & {
+            top: 0;
+        }
+    }
+    // modal
+    &.apf-AppFrame_Modal--mobile {
+        inset: $app-modal-gutter;
+
+        // adjust for tool bar at the bottom
+        [class*="apf-AppFrame--has-action-menu"] & {
+            bottom: $app-modal-gutter + $app-action-menu-height;
+        }
+    }
+}
