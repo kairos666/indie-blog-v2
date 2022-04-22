@@ -1,7 +1,7 @@
 @import "variables";
 
 .lb-CardList {
-    margin: 0;
+    margin: $gutter;
     padding-inline-start: 0;
     list-style: none;
     counter-reset: players-rank-counter;
@@ -13,18 +13,33 @@
         position: relative;
 
         &:before {
-            content: "#" counter(players-rank-counter);
-            font-size: 2rem;
-            font-weight: 700;
+            content:counter(players-rank-counter);
             position:absolute;
-            top: $gutter;
+            top: 50%;
+            transform: translateY(-50%);
             left:0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            width:2.5rem;
+            height:2.5rem;
+            line-height: 2.5rem;
+            border-radius: 50% 50%;
+            background-color: #efefef;
+            text-align:center;
         }
     }
 }
 
 .lb-Card {
-    display:block;
+    display:grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    grid-template-areas: 
+        "player-name player-score"
+        "player-summary player-score";
+    column-gap: $sm-gutter;
+    row-gap: $xs-gutter;
+    
     width:100%;
     border:none;
     background: none;
@@ -35,35 +50,49 @@
     font-size: 1rem;
     cursor: pointer;
     padding: $gutter;
+    transition: background-color .3s ease, color .3s ease;
 
-    &:hover, &:focus {
+    &:hover, &:focus, &.lb-Card--selected {
         color:$app-accent-color;
+    }
+
+    &.lb-Card--selected {
+        color:$app-accent-color;
+        background-color: rgba($app-accent-color, .05);
     }
 }
 
 .lb-Card_Title {
+    grid-area: player-name;
     margin:0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .lb-Card_Score {
-    margin-inline-start:0.5rem;
+    grid-area: player-score;
+    align-self: center;
     padding:0.5rem;
     background-color: #efefef;
     border-radius: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
 
     span {
         margin-inline-start: 0.5rem;
-        font-size: .5em;
+        font-size: .7em;
     }
 }
 
 .lb-Card_Subtext {
+    grid-area: player-summary;
     margin:0;
     font-style: italic;
     color: #666;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .lb-EmptyList {
