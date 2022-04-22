@@ -57,13 +57,21 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         setModalElement(<CreateMatchForm players={ players } onSubmit={ createMatch } onCancel={ cancelModal }/>);
     }, [players, createMatch]);
 
+    // see player detail
+    const createPlayerDetailTriggerCb = useCallback(playerId => {
+        const playerData = eloBoardBackend.current.getPlayer(playerId);
+
+        // only trigger modal when player data exists
+        if(playerData !== null) setModalElement(<PlayerDetails player={ playerData } onCancel={ cancelModal } />);
+    }, [eloBoardBackend]);
+
     return (
         <AppFrame desktopBreakpoint={ 1000 }>
             <ActionMenu>
                 <button type="button" onClick={ createPlayerTriggerCb }>Ajouter un joueur</button>
                 <button type="button" onClick={ createMatchTriggerCb }>Ajouter un match</button>
             </ActionMenu>
-            <LeaderBoard players={ players } itemHeight={ 100 } />
+            <LeaderBoard players={ players } onPlayerDetail={ createPlayerDetailTriggerCb } itemHeight={ 100 } />
             { modalElement ? <Detail>{ modalElement }</Detail> : null }
         </AppFrame>
     )

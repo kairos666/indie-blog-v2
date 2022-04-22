@@ -1,14 +1,15 @@
 import { Player } from 'kai-elo-rating/types/types';
 import styles from './LeaderBoard.module.scss';
-import { FC } from 'react';
+import { FC, MouseEvent, useCallback } from 'react';
 import { useTransition, animated } from '@react-spring/web';
 
 type LeaderBoardProps = {
     players: Player[],
+    onPlayerDetail: (playerId:number) => void,
     itemHeight: number
 };
 
-const LeaderBoard:FC<LeaderBoardProps> = ({ players, itemHeight }) => {
+const LeaderBoard:FC<LeaderBoardProps> = ({ players, onPlayerDetail, itemHeight }) => {
     // list height (all items have the same height)
     const listHeight = itemHeight * players.length;
 
@@ -31,6 +32,11 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players, itemHeight }) => {
             update: (extendedPlayer:any) => ({ y: extendedPlayer.y })
         }
     );
+
+    const onPlayerDetailCb = useCallback((playerId:number) => (evt:MouseEvent) => {
+        evt.preventDefault();
+        onPlayerDetail(playerId);
+    }, [onPlayerDetail]);
     
     // empty roster case
     if(!players || players.length === 0) return (
@@ -50,7 +56,7 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players, itemHeight }) => {
         <ol style={ { height: `${ listHeight }px` } } className={ styles["lb-CardList"] }>
             {transitions((style, player, t, index) => (
                 <animated.li style={{ position: 'absolute', willChange: 'transform, height, opacity', width: '100%', height: `${ itemHeight }px`, zIndex: players.length - index, ...style }}>
-                    <div className={ styles["lb-Card"] }>
+                    <button type="button" onClick={ onPlayerDetailCb(player.id) } className={ styles["lb-Card"] }>
                         <h2 className={ styles["lb-Card_Title"] }>{ player?.meta?.name }<span className={ styles["lb-Card_Score"] }>{ player.currentRank }<span>elo</span></span></h2>
                         {(player.matches.length === 0)
                             ? <p className={ styles["lb-Card_Subtext"] }>no match yet</p>
@@ -58,7 +64,7 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players, itemHeight }) => {
                             ? <p className={ styles["lb-Card_Subtext"] }>{ player.matches.length } match played on <span>{ player.lastPlayed }</span></p>
                             : <p className={ styles["lb-Card_Subtext"] }>{ player.matches.length } matchs played, lastest on <span>{ player.lastPlayed }</span></p>
                         }
-                    </div>
+                    </button>
                 </animated.li>
             ))}
         </ol>

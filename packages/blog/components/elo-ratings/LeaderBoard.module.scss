@@ -24,7 +24,21 @@
 }
 
 .lb-Card {
+    display:block;
+    width:100%;
+    border:none;
+    background: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    text-align:left;
+    font-size: 1rem;
+    cursor: pointer;
     padding: $gutter;
+
+    &:hover, &:focus {
+        color:$app-accent-color;
+    }
 }
 
 .lb-Card_Title {
