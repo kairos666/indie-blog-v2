@@ -12,12 +12,10 @@ type EloBoardProps = {
 };
 
 const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
-    // instance of in memory elo board class
-    const eloBoardBackend = useRef(new EloRankingBoardInMemory(initialRank, fixedKFactorRuleMaker(kFactor)));
-    // players roster collection
-    const [players, setPlayers] = useState(eloBoardBackend.current.getAllPlayers());
-    // modals/drawer state (null if closed)
-    const [modalElement, setModalElement] = useState((null as ReactNode|null))
+    const eloBoardBackend = useRef(new EloRankingBoardInMemory(initialRank, fixedKFactorRuleMaker(kFactor))); // instance of in memory elo board class
+    const [players, setPlayers] = useState(eloBoardBackend.current.getAllPlayers()); // players roster collection
+    const [modalElement, setModalElement] = useState((null as ReactNode|null)); // modals/drawer state (null if closed)
+    const [selectedPlayer, setSelectedPlayer] = useState((null as number|null)); // which player Id is currently selected (null if none)
 
     /************** callbacks *************/
     const updatePlayersRoster = useCallback(() => {
@@ -27,6 +25,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
     // cancel modal
     const cancelModal = useCallback(() => {
         setModalElement(null);
+        setSelectedPlayer(null);
     }, []);
 
     // player handling
@@ -62,7 +61,10 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
         const playerData = eloBoardBackend.current.getPlayer(playerId);
 
         // only trigger modal when player data exists
-        if(playerData !== null) setModalElement(<PlayerDetails player={ playerData } onCancel={ cancelModal } />);
+        if(playerData !== null) {
+            setModalElement(<PlayerDetails player={ playerData } onCancel={ cancelModal } />);
+            setSelectedPlayer(playerId);
+        }
     }, [eloBoardBackend]);
 
     return (
@@ -71,7 +73,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
                 <button type="button" onClick={ createPlayerTriggerCb }>Ajouter un joueur</button>
                 <button type="button" onClick={ createMatchTriggerCb }>Ajouter un match</button>
             </ActionMenu>
-            <LeaderBoard players={ players } onPlayerDetail={ createPlayerDetailTriggerCb } itemHeight={ 100 } />
+            <LeaderBoard players={ players } selectedPlayer={ selectedPlayer } onPlayerSelect={ createPlayerDetailTriggerCb } itemHeight={ 82 } />
             { modalElement ? <Detail>{ modalElement }</Detail> : null }
         </AppFrame>
     )

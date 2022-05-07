@@ -5,11 +5,12 @@ import { useTransition, animated } from '@react-spring/web';
 
 type LeaderBoardProps = {
     players: Player[],
-    onPlayerDetail: (playerId:number) => void,
+    selectedPlayer: null|number,
+    onPlayerSelect: (playerId:number) => void,
     itemHeight: number
 };
 
-const LeaderBoard:FC<LeaderBoardProps> = ({ players, onPlayerDetail, itemHeight }) => {
+const LeaderBoard:FC<LeaderBoardProps> = ({ players, selectedPlayer, onPlayerSelect, itemHeight }) => {
     // list height (all items have the same height)
     const listHeight = itemHeight * players.length;
 
@@ -35,8 +36,8 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players, onPlayerDetail, itemHeight 
 
     const onPlayerDetailCb = useCallback((playerId:number) => (evt:MouseEvent) => {
         evt.preventDefault();
-        onPlayerDetail(playerId);
-    }, [onPlayerDetail]);
+        onPlayerSelect(playerId);
+    }, [onPlayerSelect]);
     
     // empty roster case
     if(!players || players.length === 0) return (
@@ -54,19 +55,28 @@ const LeaderBoard:FC<LeaderBoardProps> = ({ players, onPlayerDetail, itemHeight 
     // nominal case with players in roster
     return (
         <ol style={ { height: `${ listHeight }px` } } className={ styles["lb-CardList"] }>
-            {transitions((style, player, t, index) => (
-                <animated.li style={{ position: 'absolute', willChange: 'transform, height, opacity', width: '100%', height: `${ itemHeight }px`, zIndex: players.length - index, ...style }}>
-                    <button type="button" onClick={ onPlayerDetailCb(player.id) } className={ styles["lb-Card"] }>
-                        <h2 className={ styles["lb-Card_Title"] }>{ player?.meta?.name }<span className={ styles["lb-Card_Score"] }>{ player.currentRank }<span>elo</span></span></h2>
-                        {(player.matches.length === 0)
-                            ? <p className={ styles["lb-Card_Subtext"] }>no match yet</p>
-                            : (player.matches.length === 1)
-                            ? <p className={ styles["lb-Card_Subtext"] }>{ player.matches.length } match played on <span>{ player.lastPlayed }</span></p>
-                            : <p className={ styles["lb-Card_Subtext"] }>{ player.matches.length } matchs played, lastest on <span>{ player.lastPlayed }</span></p>
-                        }
-                    </button>
-                </animated.li>
-            ))}
+            {transitions((style, player, t, index) => {
+                const isSelectedPlayer = (player.id === selectedPlayer);
+                const cardClasses = `${ styles["lb-Card"] } ${ isSelectedPlayer ? styles["lb-Card--selected"] : '' }`;
+                const onClickHandler = isSelectedPlayer
+                    ? () => {}
+                    : onPlayerDetailCb(player.id);
+
+                return (
+                    <animated.li style={{ position: 'absolute', willChange: 'transform, height, opacity', width: '100%', height: `${ itemHeight }px`, zIndex: players.length - index, ...style }}>
+                        <button type="button" onClick={ onClickHandler } className={ cardClasses }>
+                            <h2 className={ styles["lb-Card_Title"] }>{ player?.meta?.name }</h2>
+                            {(player.matches.length === 0)
+                                ? <p className={ styles["lb-Card_Subtext"] }>no match yet</p>
+                                : (player.matches.length === 1)
+                                ? <p className={ styles["lb-Card_Subtext"] }>{ player.matches.length } match played on <span>{ player.lastPlayed }</span></p>
+                                : <p className={ styles["lb-Card_Subtext"] }>{ player.matches.length } matchs played, lastest on <span>{ player.lastPlayed }</span></p>
+                            }
+                            <span className={ styles["lb-Card_Score"] }>{ player.currentRank }<span>elo</span></span>
+                        </button>
+                    </animated.li>
+                )
+            })}
         </ol>
     );
 }
