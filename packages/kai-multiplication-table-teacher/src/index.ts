@@ -1,4 +1,4 @@
-import { MTable, MTableMultipleChoicesQuestionEntry, MultiMTable, TableConfig } from "./types";
+import { MTable, MTableEntry, MTableMultipleChoicesQuestionEntry, MultiMTable, TableConfig, TableMultipleChoicesConfig } from "./types";
 import { shuffle } from "lodash";
 
 const defaultTableConfig:TableConfig = {
@@ -6,6 +6,16 @@ const defaultTableConfig:TableConfig = {
     isShuffled: false
 }
 
+const defaultTableMultipleChoicesConfig:TableMultipleChoicesConfig = {
+	proposalCount: 6,
+    proposalVariationAmplitude: 20
+}
+
+/**
+ * get representation of multiplication table - for display purposes
+ * @param tableMainParam 
+ * @param config 
+ */
 export function multiplicationTableBuilder(tableMainParam:number, config?:TableConfig):MTable
 export function multiplicationTableBuilder(tableMainParam:number[], config?:TableConfig):MultiMTable;
 export function multiplicationTableBuilder(tableMainParam:number|number[], config:TableConfig = defaultTableConfig):MTable|MultiMTable {
@@ -43,7 +53,60 @@ export function multiplicationTableBuilder(tableMainParam:number|number[], confi
 	}
 }
 
-// export function multiplicationTableBatchQuestionsBuilder(tableMainParam:number|number[], config):MTableDirectQuestionEntry[]|MTableMultipleChoicesQuestionEntry[] {
+/**
+ * Get questions with multiple choices for testing student purposes
+ * @param tables 
+ * @param config 
+ */
+export function multiplicationTableBatchQuestionsBuilder(tables:MTable|MultiMTable, config:TableMultipleChoicesConfig = defaultTableMultipleChoicesConfig):MTableMultipleChoicesQuestionEntry[] {
+	// choices builder utility function
+	const choicesBuilder = (entry:MTableEntry) => {
+		let safetyLoopMaxCount:number = 0;
+		const resultChoices:number[] = [];
 
-// }
+		// loop attempt to generate valid WRONG choices until choices count is fulfilled (maximum 100 attempts)
+		do {
+			// generate random number between minus variation and plus variation around real result
+			const generatedChoice:number = Math.round(entry.result + 2 * (Math.random() - 0.5) * config.proposalVariationAmplitude);
+			// console.log(`result: ${ entry.result } choice: ${ generatedChoice } (amplitude: ${ config.proposalVariationAmplitude })`);
+
+			// check if generated choice respect constraints and push it if yes
+			if(generatedChoice !== entry.result && !resultChoices.includes(generatedChoice)) resultChoices.push(generatedChoice);
+
+			// increment safety loop count
+			safetyLoopMaxCount++;
+		} while ((resultChoices.length + 1 < config.proposalCount) && (safetyLoopMaxCount < 100))
+
+		// inject RIGHT choice randomly in choices array
+		const randomIndex:number = Math.floor(Math.random() * resultChoices.length);
+		resultChoices.splice(randomIndex, 0, entry.result);
+
+		return resultChoices
+	}
+
+	// flatten array
+	const flattenedArray:MTable = (tables as any).reduce((acc:MTableEntry[], curr:MTableEntry|MTable) => {
+		// check if entry (MONO) or table (MULTI)
+		const isMulti:boolean = Array.isArray(curr);
+
+		if(isMulti) {
+			acc.push(...(curr as MTableEntry[]));
+		} else {
+			acc.push((curr as MTableEntry));
+		}
+
+		return acc;
+	}, []);
+
+	// shuffle entries
+	const shuffledArray:MTable = shuffle(flattenedArray);
+
+	// generate choices for each entry
+	return shuffledArray.map(entry => {
+		return {
+			...entry,
+			choices: choicesBuilder(entry)
+		}
+	});
+}
 

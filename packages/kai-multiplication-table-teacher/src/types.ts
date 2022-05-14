@@ -16,17 +16,19 @@ export type TableConfig = {
 }
 
 /**
- * a question descriptor (for direct answers without response prompts)
+ * config object for multiple choices building parameters (how many proposal, amplitude of variations)
+ * TIPS: to avoid issues select a proposal count way lower than amplitude to have enough room to generate enough choices
  */
-export type MTableDirectQuestionEntry = {
-
+export type TableMultipleChoicesConfig = {
+    proposalCount: number,
+    proposalVariationAmplitude: number
 }
 
 /**
  * a question descriptor (without multiple response prompts, one right the rest wrong)
  */
-export type MTableMultipleChoicesQuestionEntry = MTableDirectQuestionEntry & {
-
+export type MTableMultipleChoicesQuestionEntry = MTableEntry & {
+    choices: number[]
 }
 
 /**

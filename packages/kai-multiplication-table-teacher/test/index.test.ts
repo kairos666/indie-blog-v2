@@ -1,5 +1,5 @@
-import { MTable, MultiMTable, TableConfig } from "../src/types";
-import { multiplicationTableBuilder } from "../src/index";
+import { MTable, MTableMultipleChoicesQuestionEntry, MultiMTable, TableConfig, TableMultipleChoicesConfig } from "../src/types";
+import { multiplicationTableBatchQuestionsBuilder, multiplicationTableBuilder } from "../src/index";
 import { isEqual } from "lodash";
 
 describe("kai-multiplication-table-teacher", () => {
@@ -10,6 +10,14 @@ describe("kai-multiplication-table-teacher", () => {
     const configAlternativeB:TableConfig = {
         maxMultiplicator: 10,
         isShuffled: true
+    }
+    const configQuestionAlternative:TableMultipleChoicesConfig = {
+        proposalCount: 8,
+        proposalVariationAmplitude: 15
+    }
+    const configQuestionImpossibleToFulfillAlternative:TableMultipleChoicesConfig = {
+        proposalCount: 10,
+        proposalVariationAmplitude: 3
     }
     const expectedTable1Results:MTable = [
         { mainParam: 1, multiplicator: 1, result: 1 },
@@ -162,4 +170,132 @@ describe("kai-multiplication-table-teacher", () => {
             });
         });
 	});
+
+    describe("multiplicationTableBatchQuestionsBuilder", () => {
+        it(`support MONO table as input parameter`, () => {
+            expect(() => {
+                multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder(1));
+            }).not.toThrow();
+        });
+        it(`support MULTI table as input parameter`, () => {
+            expect(() => {
+                multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]));
+            }).not.toThrow();
+        });
+        it(`generate shuffled questions (shuffle check, even if input is ordered)`, () => {
+            // MONO
+            const inputMonoTable = multiplicationTableBuilder(1);
+            const outputMonoTable = multiplicationTableBatchQuestionsBuilder(inputMonoTable);
+
+            // delete choices to allow comparison
+            const noChoicesOutputMonoTable = (outputMonoTable as any).reduce((acc:Partial<MTableMultipleChoicesQuestionEntry>[], curr:Partial<MTableMultipleChoicesQuestionEntry>) => {
+                const cloneEntryWithoutChoice = {...curr};
+                delete cloneEntryWithoutChoice?.choices;
+
+                return [...acc, cloneEntryWithoutChoice];
+            }, []);
+
+            // check that deep equality is wrong (because of shuffled entries)
+            expect(noChoicesOutputMonoTable).not.toEqual(inputMonoTable);
+
+            // check there is exactly the correct number of entries
+            expect(inputMonoTable.length).toBe(outputMonoTable.length);
+
+            // check that all entries exists
+            const hasAllMonoEntries:boolean = inputMonoTable.every(expectedEntry => {
+                const resultEntryMatch = noChoicesOutputMonoTable.find((resultEntry:Partial<MTableMultipleChoicesQuestionEntry>) => ((resultEntry.mainParam === expectedEntry.mainParam) && (resultEntry.multiplicator === expectedEntry.multiplicator) && (resultEntry.result === expectedEntry.result)));
+
+                return !!resultEntryMatch;
+            });
+            expect(hasAllMonoEntries).toBeTruthy();
+            
+            // MULTI
+            const inputMultiTable = multiplicationTableBuilder([1, 5, 9]);
+            const outputMultiTable = multiplicationTableBatchQuestionsBuilder(inputMultiTable);
+            const flattenedInputMultiTable = inputMultiTable.reduce((acc, curr) => {
+                return [...acc, ...curr];
+            }, []);
+
+            // delete choices to allow comparison
+            const noChoicesOutputMultiTable = (outputMultiTable as any).reduce((acc:Partial<MTableMultipleChoicesQuestionEntry>[], curr:Partial<MTableMultipleChoicesQuestionEntry>) => {
+                const cloneEntryWithoutChoice = {...curr};
+                delete cloneEntryWithoutChoice?.choices;
+
+                return [...acc, cloneEntryWithoutChoice];
+            }, []);
+
+            // check that deep equality is wrong (because of shuffled entries)
+            expect(noChoicesOutputMultiTable).not.toEqual(flattenedInputMultiTable);
+
+            // check there is exactly the correct number of entries
+            expect(flattenedInputMultiTable.length).toBe(outputMultiTable.length);
+
+            // check that all entries exists
+            const hasAllMultiEntries:boolean = flattenedInputMultiTable.every(expectedEntry => {
+                const resultEntryMatch = noChoicesOutputMultiTable.find((resultEntry:Partial<MTableMultipleChoicesQuestionEntry>) => ((resultEntry.mainParam === expectedEntry.mainParam) && (resultEntry.multiplicator === expectedEntry.multiplicator) && (resultEntry.result === expectedEntry.result)));
+
+                return !!resultEntryMatch;
+            });
+            expect(hasAllMultiEntries).toBeTruthy();
+        });
+        it(`correct choice appears once and only once (correct choice check)`, () => {
+            const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]));
+
+            // correct if all questions have exactly one RIGHT answer
+            const isResultAppearingOnce:boolean = questions.every(questionEntry => {
+                const filterChoicesRightAnswsers = questionEntry.choices.filter(proposal => proposal === questionEntry.result);
+
+                // correct when the correct answer appears only once
+                return (filterChoicesRightAnswsers.length === 1);
+            });
+
+            expect(isResultAppearingOnce).toBeTruthy();
+        });
+        it(`generate correct choices count for each entries (count check)`, () => {
+            const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]), configQuestionAlternative);
+
+            // correct if all questions have exactly "proposalCount" choices
+            const isProposalCountCorrect:boolean = questions.every(questionEntry => (questionEntry.choices.length === configQuestionAlternative.proposalCount));
+
+            expect(isProposalCountCorrect).toBeTruthy();
+        });
+        it(`generate only valid choices for each entries (amplitude check)`, () => {
+            const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]), configQuestionAlternative);
+
+            // correct if all questions have all their choices inside "proposalVariationAmplitude" brackets
+            const isProposalAmplitudeCorrect:boolean = questions.every(questionEntry => {
+                const minProposal:number = questionEntry.result - configQuestionAlternative.proposalVariationAmplitude;
+                const maxProposal:number = questionEntry.result + configQuestionAlternative.proposalVariationAmplitude;
+
+                return questionEntry.choices.every(proposal => ((minProposal <= proposal) && (proposal <= maxProposal)));
+            });
+
+            expect(isProposalAmplitudeCorrect).toBeTruthy();
+        });
+        it(`generate only valid choices for each entries (integers only check)`, () => {
+            const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]));
+
+            // correct if all questions have all integres choices
+            const isProposalsIntegersOnly:boolean = questions.every(questionEntry => {
+                return questionEntry.choices.every(proposal => Number.isInteger(proposal));
+            });
+            
+            expect(isProposalsIntegersOnly).toBeTruthy();
+        });
+        it(`generate unique choices for each entries (choice duplication check)`, () => {
+            const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]));
+
+            // correct if all questions have unique choices
+            const isProposalUniqueAlways:boolean = questions.every(questionEntry => {
+                return (new Set(questionEntry.choices)).size === questionEntry.choices.length;
+            });
+
+            expect(isProposalUniqueAlways).toBeTruthy();
+        });
+        it(`safely execute in case amplitude and count is impossible to fulfill (execution ends in a satisfying way without stack overflow error)`, () => {
+            expect(() => {
+                multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]), configQuestionImpossibleToFulfillAlternative);
+            }).not.toThrow();
+        });
+    });
 });
