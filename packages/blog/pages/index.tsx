@@ -15,6 +15,7 @@ const Home: NextPage = () => {
             <main className={styles.main}>
                 <h1 className={styles.title}>Bienvenu dans le blog de Kaïros</h1>
                 <Link href='/mini-app/elo-board'><a>app de gestion de ranking elo</a></Link>
+                <Link href='/mini-app/multiplication-table-teacher'><a>app pour apprendre les tables de multiplications</a></Link>
             </main>
         </div>
     )
