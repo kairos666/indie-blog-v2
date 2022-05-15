@@ -44,7 +44,7 @@
     border-radius: 0.25rem;
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     
-    &:hover, &:focus, &:active {
+    &:hover, &:focus, &:active, &[aria-pressed="true"] {
         color: white;
         background-color: $app-accent-color;
     }
