@@ -9,11 +9,17 @@ export default {
 		format: 'esm',
 		file: pkg.module,
 		sourcemap: false,
+		globals: {
+			'lodash': 'lodash'
+		}
 	}, {
 		format: 'cjs',
 		file: pkg.main,
 		sourcemap: false,
 		esModule: false,
+		globals: {
+			'lodash': 'lodash'
+		}		
 	}, {
 		name: pkg['umd:name'] || pkg.name,
 		format: 'umd',
@@ -22,7 +28,10 @@ export default {
 		esModule: false,
 		plugins: [
 			terser()
-		]
+		],
+		globals: {
+			'lodash': 'lodash'
+		}
 	}],
 	external: [
 		...require('module').builtinModules,
