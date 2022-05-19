@@ -7,6 +7,16 @@ type TableViewerProps = {
 };
 
 const TableViewer:FC<TableViewerProps> = ({ viewTables }) => {
+    // edge case - no table is selected for display
+    if(viewTables.length === 0) {
+        return (
+            <article className={ styles['tv-EmptyState'] }>
+                <p>Clic sur les numéros de tables de multiplication que tu veux réviser !</p>
+            </article>
+        );
+    }
+
+    // standard case - some table is ready to display
     const tables = multiplicationTableBuilder(viewTables);
 
     return (

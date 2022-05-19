@@ -14,7 +14,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
     activityState: "LEARN",
     changeGlobalState: (newActivityState:"LEARN"|"TEST") => set({ activityState: newActivityState }),
     learn: {
-        selectedTables: [1],
+        selectedTables: [],
         availableTables: new Array(10).fill(null).map((_, index) => index + 1),
         toggleSelectedTable: (toggleMainParam) => {
             const currentSelectedTables = get().learn.selectedTables;

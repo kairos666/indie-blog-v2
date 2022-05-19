@@ -2,6 +2,40 @@
 @import "mixins";
 @import "include-media-mixins";
 
+.tv-EmptyState {
+    p {
+        font-weight: 700;
+        font-size: 2.5rem;
+        text-align: center;
+        margin:$xl-gutter;
+        padding: $gutter;
+        border:1px solid $app-accent-color;
+        border-radius: 0.25rem;
+    }
+
+    &:before {
+        content: '';
+        position: absolute;
+        width:100vw;
+        height:50vh;
+        bottom:0;
+        left:0;
+        background: no-repeat url("/math-teacher/img/cookie-monster-pointing-up.png") 0 100%;
+        background-size: contain;
+    }
+
+    @include media("<=small") {
+        p {
+            margin:$gutter;
+            font-size: 1.5rem;
+        }
+
+        &:before {
+            background-position: -20vw 100%;
+        }
+    }
+}
+
 .tv-TablesContainer {
     .tv-TableCard:first-child {
         margin-block-start:0;
