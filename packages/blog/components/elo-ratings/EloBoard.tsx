@@ -40,7 +40,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
 
     const createPlayerTriggerCb = useCallback(() => {
         setModalElement(<CreatePlayerForm onSubmit={ createPlayer } onCancel={ cancelModal }/>);
-    }, [createPlayer]);
+    }, [createPlayer, cancelModal]);
 
     // match handling
     const createMatch = useCallback(({ playerAId, playerBId, matchOutcome }) => {
@@ -54,7 +54,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
 
     const createMatchTriggerCb = useCallback(() => {
         setModalElement(<CreateMatchForm players={ players } onSubmit={ createMatch } onCancel={ cancelModal }/>);
-    }, [players, createMatch]);
+    }, [players, createMatch, cancelModal]);
 
     // see player detail
     const createPlayerDetailTriggerCb = useCallback(playerId => {
@@ -65,7 +65,7 @@ const EloBoard:FC<EloBoardProps> = ({ initialRank, kFactor }) => {
             setModalElement(<PlayerDetails player={ playerData } onCancel={ cancelModal } />);
             setSelectedPlayer(playerId);
         }
-    }, [eloBoardBackend]);
+    }, [eloBoardBackend, cancelModal]);
 
     return (
         <AppFrame desktopBreakpoint={ 1000 }>

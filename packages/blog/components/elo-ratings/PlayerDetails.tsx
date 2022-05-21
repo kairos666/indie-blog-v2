@@ -1,5 +1,6 @@
 import { Player } from 'kai-elo-rating/types/types';
 import { FC, useCallback, MouseEvent } from 'react';
+import Image from '../ui-elements/Image';
 import style from './PlayerDetails.module.scss';
 
 type PlayerDetailsProps = {
@@ -15,7 +16,7 @@ const PlayerDetails:FC<PlayerDetailsProps> = ({ player, onCancel }) => {
 
     return (
         <>
-            <h1 className={ style['pdtl-ModalTitle'] }><img src="/svg/undraw_handcrafts_man.svg" width="30" height="30" />{ player?.meta?.name }</h1>
+            <h1 className={ style['pdtl-ModalTitle'] }><Image alt="" src="/svg/undraw_handcrafts_man.svg" width="30" height="30" />{ player?.meta?.name }</h1>
             <p>rang: #2</p>
             <p>elo score: { player.currentRank }</p>
             <section>
