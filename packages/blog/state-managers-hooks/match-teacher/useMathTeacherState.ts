@@ -1,9 +1,17 @@
 import create from 'zustand';
 import produce from 'immer';
+import { MTableMultipleChoicesQuestionEntry } from 'kai-multiplication-table-teacher/types/types';
+import { multiplicationTableBatchQuestionsBuilder, multiplicationTableBuilder } from 'kai-multiplication-table-teacher';
 
 export interface TestConfig {
     testMode: "NO_TIME_LIMIT"|"SOFT_TIME_LIMIT"|"HARD_TIME_LIMIT"
+    testStyle: "MULTIPLE_CHOICES"|"DIRECT_INPUT"
     selectedTables: number[]
+}
+export interface TestQuestionary {
+    questions: MTableMultipleChoicesQuestionEntry[]
+    results: { correctAnswer:boolean, elapsedTime:number }[]
+    currentQuestionIndex:number
 }
 export interface MathTeacherState {
     activityState: "LEARN"|"TEST"
@@ -18,10 +26,11 @@ export interface MathTeacherState {
         toggleSelectedTable: (toggleMainParam: number) => void
         testState: "PRE_TEST"|"RUN_TEST"|"TEST_RESULTS"
         testConfig: TestConfig
+        questionnaire: TestQuestionary
         startTest: () => void
         endTest: () => void
         resetTest: () => void
-        changeTestConfig: (newTestConfig:TestConfig) => void
+        changeTestConfig: (newTestConfig:Partial<TestConfig>) => void
     }
 } 
 
@@ -88,7 +97,13 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
         testState: "PRE_TEST",
         testConfig: {
             testMode: "NO_TIME_LIMIT",
+            testStyle: "MULTIPLE_CHOICES",
             selectedTables: []
+        },
+        questionnaire: {
+            questions: [],
+            results: [],
+            currentQuestionIndex: 0
         },
         startTest: () => {
             const currentTestState = get().test.testState;
@@ -96,6 +111,11 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
             // allow only when test in configuration stage
             if(currentTestState === "PRE_TEST") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "RUN_TEST";
+
+                // generate questions based on current config
+                draft.test.questionnaire.currentQuestionIndex = 0;
+                draft.test.questionnaire.results = [];
+                draft.test.questionnaire.questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder(draft.test.testConfig.selectedTables));
             }));
         },
         endTest: () => {
@@ -114,13 +134,15 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 draft.test.testState = "PRE_TEST";
             }));
         },
-        changeTestConfig: (newTestConfig) => {
+        changeTestConfig: (newTestConfig:Partial<TestConfig>) => {
             // forbid test config changes when not in test configuration stage
             if(get().test.testState !== "PRE_TEST") throw new Error(`test config change forbidden because test is underway`);
 
             // commit new mode
             set(produce((draft:MathTeacherState) => {
-                draft.test.testConfig = newTestConfig;
+                if(newTestConfig.selectedTables) draft.test.testConfig.selectedTables = newTestConfig.selectedTables;
+                if(newTestConfig.testMode) draft.test.testConfig.testMode = newTestConfig.testMode;
+                if(newTestConfig.testStyle) draft.test.testConfig.testStyle = newTestConfig.testStyle;
             }));
         }
     }
