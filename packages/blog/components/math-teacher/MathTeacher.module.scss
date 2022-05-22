@@ -1,0 +1,9 @@
+@import "variables";
+
+.nav-NavBtn {
+    // test may be underway - prevent moving away
+    &[aria-pressed="false"]:disabled {
+        opacity: 0.25;
+        cursor: not-allowed;
+    }
+}
