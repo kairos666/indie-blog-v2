@@ -37,11 +37,11 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
             // test is done, reset setup if moving away to learn
             case (newActivityState === "LEARN" && currActivityState === "TEST" && currTestState === "TEST_RESULTS"):
                 resetTest();
-                set({ activityState: "LEARN" });
+                set(produce((draft:MathTeacherState) => { draft.activityState = "LEARN" }));
             break;
             // standard case
             default:
-                set({ activityState: newActivityState })
+                set(produce((draft:MathTeacherState) => { draft.activityState = newActivityState }));
         }
     },
     learn: {
@@ -53,10 +53,14 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
     
             if(isAlreadySelected) {
                 // already exists --> remove
-                set(state => ({ learn: { ...state.learn, selectedTables: currentSelectedTables.filter(selectedItem => selectedItem !== toggleMainParam).sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0) }}));
+                set(produce((draft:MathTeacherState) => {
+                    draft.learn.selectedTables = currentSelectedTables.filter(selectedItem => selectedItem !== toggleMainParam).sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0);
+                }));
             } else {
                 // not yet selected --> add
-                set(state => ({ learn: { ...state.learn, selectedTables: [...currentSelectedTables, toggleMainParam].sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0) }}));
+                set(produce((draft:MathTeacherState) => {
+                    draft.learn.selectedTables = [...currentSelectedTables, toggleMainParam].sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0);
+                }));
             }        
         }
     },
@@ -71,13 +75,13 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
     
             if(isAlreadySelected) {
                 // already exists --> remove
-                set(produce((state:MathTeacherState) => {
-                    state.test.testConfig.selectedTables = currentSelectedTables.filter(selectedItem => selectedItem !== toggleMainParam).sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0);
+                set(produce((draft:MathTeacherState) => {
+                    draft.test.testConfig.selectedTables = currentSelectedTables.filter(selectedItem => selectedItem !== toggleMainParam).sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0);
                 }));
             } else {
                 // not yet selected --> add
-                set(produce((state:MathTeacherState) => {
-                    state.test.testConfig.selectedTables = [...currentSelectedTables, toggleMainParam].sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0);
+                set(produce((draft:MathTeacherState) => {
+                    draft.test.testConfig.selectedTables = [...currentSelectedTables, toggleMainParam].sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0);
                 }));
             }        
         },
@@ -90,24 +94,24 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
             const currentTestState = get().test.testState;
 
             // allow only when test in configuration stage
-            if(currentTestState === "PRE_TEST") set(produce((state:MathTeacherState) => {
-                state.test.testState = "RUN_TEST";
+            if(currentTestState === "PRE_TEST") set(produce((draft:MathTeacherState) => {
+                draft.test.testState = "RUN_TEST";
             }));
         },
         endTest: () => {
             const currentTestState = get().test.testState;
 
             // allow only when test in run stage
-            if(currentTestState === "RUN_TEST") set(produce((state:MathTeacherState) => {
-                state.test.testState = "TEST_RESULTS";
+            if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
+                draft.test.testState = "TEST_RESULTS";
             }));
         },
         resetTest: () => {
             const currentTestState = get().test.testState;
 
             // allow only when test in run or end state stage
-            if(currentTestState === "RUN_TEST" || currentTestState === "TEST_RESULTS") set(produce((state:MathTeacherState) => {
-                state.test.testState = "PRE_TEST";
+            if(currentTestState === "RUN_TEST" || currentTestState === "TEST_RESULTS") set(produce((draft:MathTeacherState) => {
+                draft.test.testState = "PRE_TEST";
             }));
         },
         changeTestConfig: (newTestConfig) => {
@@ -115,8 +119,8 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
             if(get().test.testState !== "PRE_TEST") throw new Error(`test config change forbidden because test is underway`);
 
             // commit new mode
-            set(produce((state:MathTeacherState) => {
-                state.test.testConfig = newTestConfig;
+            set(produce((draft:MathTeacherState) => {
+                draft.test.testConfig = newTestConfig;
             }));
         }
     }

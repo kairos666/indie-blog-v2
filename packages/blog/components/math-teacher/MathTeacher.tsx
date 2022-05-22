@@ -1,6 +1,7 @@
-import { FC } from 'react';
+import { FC, ReactNode, useCallback, useState } from 'react';
 import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
-import AppFrame, { ActionMenu } from '../ui-elements/AppFrame';
+import shallow from 'zustand/shallow';
+import AppFrame, { ActionMenu, Detail } from '../ui-elements/AppFrame';
 import MultiplicationTablesSelector from './MultiplicationTablesSelector';
 import TableViewer from './TableViewer';
 import TestView from './TestView';
@@ -9,7 +10,16 @@ import styles from './MathTeacher.module.scss';
 type MathTeacherProps = {};
 
 const MathTeacher:FC<MathTeacherProps> = () => {
-    const { activityState, learn, changeGlobalState, test: { testState } } = useMathTeacherState();
+    const { activityState, learn, changeGlobalState, testState } = useMathTeacherState(state => ({
+        activityState: state.activityState, 
+        learn: state.learn, 
+        testState: state.test.testState,
+        changeGlobalState: state.changeGlobalState
+    }), shallow);
+
+    // centralize modal details from test view
+    const [modal, setModal] = useState((null as ReactNode|null));
+    const displayDetailHandler = useCallback((modalChildren:ReactNode|null) => { setModal(modalChildren) }, [setModal]);
 
     return (
         <AppFrame desktopBreakpoint={ 1000 }>
@@ -18,8 +28,12 @@ const MathTeacher:FC<MathTeacherProps> = () => {
                 <button type="button" className={ styles["nav-NavBtn"] } title="Tester mes connaissances sur les tables de multiplication" aria-pressed={ (activityState === "TEST") } disabled={ (activityState === "TEST") } onClick={ () => changeGlobalState("TEST") } >Tester mes tables</button>
             </ActionMenu>
             {(activityState === "TEST")
-                ?   <TestView />
+                ?   <TestView displayDetailHandler={ displayDetailHandler } />
                 :   <LearnView currentlySelected={ learn.selectedTables } availableTables={ learn.availableTables } changeHandler={ learn.toggleSelectedTable } />
+            }
+            {(modal !== null)
+                ?   <Detail>{ modal }</Detail>
+                :   null
             }
         </AppFrame>
     )
