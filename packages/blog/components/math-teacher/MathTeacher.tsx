@@ -3,6 +3,7 @@ import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/us
 import AppFrame, { ActionMenu } from '../ui-elements/AppFrame';
 import MultiplicationTablesSelector from './MultiplicationTablesSelector';
 import TableViewer from './TableViewer';
+import TestView from './TestView';
 //import style from './MathTeacher.module.scss'; stylesheet already created
 
 type MathTeacherProps = {};
@@ -17,11 +18,7 @@ const MathTeacher:FC<MathTeacherProps> = () => {
                 <button type="button" aria-pressed={ (activityState === "TEST") } disabled={ (activityState === "TEST") } onClick={ () => changeGlobalState("TEST") } >Tester mes tables</button>
             </ActionMenu>
             {(activityState === "TEST")
-                ?   <TestView>
-                        <p>contenu bears: { activityState }</p>
-                        <p>contenu bears: { learn.selectedTables.join(', ') }</p>
-                        <p>contenu bears: { learn.availableTables.join(', ') }</p>
-                    </TestView>
+                ?   <TestView />
                 :   <LearnView currentlySelected={ learn.selectedTables } availableTables={ learn.availableTables } changeHandler={ learn.toggleSelectedTable } />
             }
         </AppFrame>
@@ -43,17 +40,5 @@ export const LearnView:FC<LearnViewProps> = ({ currentlySelected, availableTable
     <>
         <MultiplicationTablesSelector currentlySelected={ currentlySelected } availableTables={ availableTables } changeHandler={ changeHandler } />
         <TableViewer viewTables={ currentlySelected } />
-    </>
-);
-
-/**
- * TEST VIEW SUB COMPONENT
- */
-type TestViewProps = {}
-
-export const TestView:FC<TestViewProps> = ({ children }) => (
-    <>
-        <p>TEST VIEW</p>
-        { children }
     </>
 );
