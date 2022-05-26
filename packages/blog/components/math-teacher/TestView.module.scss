@@ -1,0 +1,38 @@
+@import "variables";
+@import "mixins";
+@import "include-media-mixins";
+
+.tv-TestLayout {
+    display:grid;
+    height: unquote("calc(100vh - #{ $app-action-menu-height })");
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "header"
+        "body";
+
+    & > *:first-child {
+        grid-area: header;
+    }
+    & > *:nth-child(2) {
+        grid-area: body;
+    }
+}
+
+.tv-testBtn {
+    @include GenericButtonStyles;
+    &:hover, &:focus {
+        background-color: rgba($app-accent-color, 0.25);
+    }
+    &:active {
+        background-color: $app-accent-color;
+    }
+
+    &.tv-testBtn--secondary {
+        border-color: transparent;
+    }
+
+    @include media("<=small") {
+        padding: $gutter;
+    }
+}

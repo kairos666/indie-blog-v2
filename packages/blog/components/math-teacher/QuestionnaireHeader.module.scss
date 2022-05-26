@@ -9,15 +9,27 @@
 
 .qh-Header_SubContainer {
     padding: $gutter;
-    &.qh-Header_SubContainer--test-setup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $gutter;
+    &.qh-Header_SubContainer--test-config {
         background-color: rgba($app-shadow-color, 0.35);
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: $gutter;
     }
-    &.qh-Header_SubContainer--test-proceeding {
+    &.qh-Header_SubContainer--test-setup,
+    &.qh-Header_SubContainer--test-proceeding,
+    &.qh-Header_SubContainer--test-results {
         background-color: rgba($app-shadow-color, 0.15);
+
+        p { margin-block: 0; }
+        menu {
+            padding-inline-start: 0;
+            margin-block: 0;
+            margin-inline-start: auto;
+            display:flex;
+            flex-wrap: wrap;
+            gap: $gutter;
+        }
     }
 }
 
@@ -42,9 +54,7 @@
         }
     }
 
-    &.qh-Setting--mono-value {
-
-    }
+    &.qh-Setting--mono-value {}
     &.qh-Setting--multi-value dd {
         background-color: transparent;
         border-radius: 0;
@@ -69,7 +79,6 @@
 }
 
 .qh-ConfigSetupTriggerBtn {
-    margin-left: auto; // everything aligned left but this one
     @include GenericButtonStyles;
     &:hover, &:focus {
         background-color: rgba($app-accent-color, 0.25);

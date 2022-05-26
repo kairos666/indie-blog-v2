@@ -1,6 +1,6 @@
 import { FC, ReactNode, useCallback } from 'react';
 import { TestConfig, TestQuestionary } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
-import { testConfigLabels } from '../../utils/Enum2LabelConverters';
+import { testConfigLabels, testStateLabels } from '../../utils/Enum2LabelConverters';
 import styles from './QuestionnaireHeader.module.scss';
 
 type QuestionnaireHeaderProps = {
@@ -11,7 +11,7 @@ type QuestionnaireHeaderProps = {
     triggerTestSetupHandler: () => void
 };
 
-const QuestionnaireHeader:FC<QuestionnaireHeaderProps> = ({ canChangeTestConfig, testState, testConfig, testQuestionary, triggerTestSetupHandler }) => {
+const QuestionnaireHeader:FC<QuestionnaireHeaderProps> = ({ canChangeTestConfig, testState, testConfig, testQuestionary, triggerTestSetupHandler, children }) => {
     const setupTrigger = useCallback(() => {
         if(canChangeTestConfig)  triggerTestSetupHandler(); // only when trigger is allowed
     }, [triggerTestSetupHandler]);
@@ -24,9 +24,37 @@ const QuestionnaireHeader:FC<QuestionnaireHeaderProps> = ({ canChangeTestConfig,
         });
     }
 
+    // test runner sub header
+    let renderedTestRunnerHeader:ReactNode = null;
+    if(testState === "PRE_TEST") {
+        renderedTestRunnerHeader = (
+            <div className={ [styles['qh-Header_SubContainer'], styles['qh-Header_SubContainer--test-setup']].join(' ') }>
+                <p>{ testStateLabels(testState) }</p>
+                <p>questions #{ testQuestionary.currentQuestionIndex + 1 } ({ testQuestionary.currentQuestionIndex + 1 }/{ testQuestionary.questions.length })</p>
+                <menu>{ children }</menu>
+            </div>
+        );
+    } else if(testState === "RUN_TEST") {
+        renderedTestRunnerHeader = (
+            <div className={ [styles['qh-Header_SubContainer'], styles['qh-Header_SubContainer--test-proceeding']].join(' ') }>
+                <p>{ testStateLabels(testState) }</p>
+                <p>questions #{ testQuestionary.currentQuestionIndex + 1 } ({ testQuestionary.currentQuestionIndex + 1 }/{ testQuestionary.questions.length })</p>
+                <menu>{ children }</menu>
+            </div>
+        );
+    } else if(testState === "TEST_RESULTS") {
+        renderedTestRunnerHeader = (
+            <div className={ [styles['qh-Header_SubContainer'], styles['qh-Header_SubContainer--test-results']].join(' ') }>
+                <p>{ testStateLabels(testState) }</p>
+                <p>questions #{ testQuestionary.currentQuestionIndex + 1 } ({ testQuestionary.currentQuestionIndex + 1 }/{ testQuestionary.questions.length })</p>
+                <menu>{ children }</menu>
+            </div>
+        );
+    }
+
     return (
         <header className={ styles['qh-Header'] }>
-            <div className={ [styles['qh-Header_SubContainer'], styles['qh-Header_SubContainer--test-setup']].join(' ') }>
+            <div className={ [styles['qh-Header_SubContainer'], styles['qh-Header_SubContainer--test-config']].join(' ') }>
                 <dl className={ [styles['qh-Setting'], styles['qh-Setting--multi-value']].join(' ') }>
                     <dt>tables de multiplication</dt>
                     <dd data-disabled={ !canChangeTestConfig } onClick={ setupTrigger }>{ renderedTableSelection }</dd>
@@ -39,15 +67,8 @@ const QuestionnaireHeader:FC<QuestionnaireHeaderProps> = ({ canChangeTestConfig,
                     <dt>style de passation du questionnaire</dt>
                     <dd data-disabled={ !canChangeTestConfig } onClick={ setupTrigger }>{ testConfigLabels(testConfig.testMode) }</dd>
                 </dl>
-                <button type="button" className={ styles['qh-ConfigSetupTriggerBtn'] } disabled={ !canChangeTestConfig } onClick={ setupTrigger } >configurer le questionnaire</button>
             </div>
-            {(testState === "RUN_TEST")
-                ?   <div className={ [styles['qh-Header_SubContainer'], styles['qh-Header_SubContainer--test-proceeding']].join(' ') }>
-                        <p>test state: { testState }</p>
-                        <p>questions #{ testQuestionary.currentQuestionIndex + 1 } ({ testQuestionary.currentQuestionIndex + 1 }/{ testQuestionary.questions.length })</p>
-                    </div>
-                : null
-            }
+            { renderedTestRunnerHeader }
         </header>
     )
 }

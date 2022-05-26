@@ -1,6 +1,7 @@
 import { FC, ReactNode, useCallback, useEffect } from 'react';
 import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
 import QuestionnaireHeader from './QuestionnaireHeader';
+import styles from './TestView.module.scss';
 
 type TestViewProps = {
     displayDetailHandler: (children:ReactNode) => void
@@ -49,41 +50,44 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
     }, []);
 
     return (
-        <>
+        <article className={ styles['tv-TestLayout'] }>
             <QuestionnaireHeader 
                 canChangeTestConfig={ canChangeTestConfig } 
                 testState={ testState } 
                 testConfig={ testConfig } 
                 testQuestionary={ testQuestionary } 
                 triggerTestSetupHandler={ triggerTestConfigSetupHandler }
-            />
-            <p>test state: { testState }</p>
-            <p>available tables: { availableTables.join(', ') }</p>
-            <br />
-            <h2>Questionnaire overview</h2>
-            <p>questions (current question in test #{ currentQuestionIndex + 1 }):</p>
-            <ol>
-                { questions.map((question, index) => (
-                    <li key={ `question-#${ index }` }>
-                        <p>{ question.mainParam } X { question.multiplicator } = { question.result } (choices: { question.choices.join(', ') })</p>
-                    </li>
-                ))}
-            </ol>
-            <p>results:</p>
-            <ol>
-                { results.map((result, index) => (
-                    <li key={ `result-#${ index }` }>
-                        <p>{ result.correctAnswer ? 'JUSTE' : 'FAUX' } ({ result.elapsedTime } secondes)</p>
-                    </li>
-                ))}
-            </ol>
-            <menu>
-                <button type="button" disabled={ (testState !== "PRE_TEST") } onClick={ startTestHandler }>start</button>
-                <button type="button" disabled={ (testState !== "RUN_TEST") } onClick={ endTestHandler }>end</button>
-                <button type="button" disabled={ (testState === "PRE_TEST") } onClick={ resetTestHandler }>reset</button>
-                <button type="button" disabled={ !canChangeTestConfig } onClick={ triggerTestConfigSetupHandler }>trigger config panel</button>
-            </menu>
-        </>
+            >
+                { (testState === "PRE_TEST") 
+                    ?   [
+                            <button type="button" className={ styles['tv-testBtn'] } onClick={ startTestHandler }>start</button>,
+                            <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ triggerTestConfigSetupHandler }>configure</button>
+                        ] 
+                    : (testState === "RUN_TEST")
+                    ?   <button type="button" className={ styles['tv-testBtn'] } onClick={ endTestHandler }>end</button>
+                    : (testState === "TEST_RESULTS")
+                    ?   <button type="button" className={ styles['tv-testBtn'] } onClick={ resetTestHandler }>reset</button>
+                    : null 
+                }
+            </QuestionnaireHeader>
+            <section>
+                <ol>
+                    { questions.map((question, index) => (
+                        <li key={ `question-#${ index }` }>
+                            <p>{ question.mainParam } X { question.multiplicator } = { question.result } (choices: { question.choices.join(', ') })</p>
+                        </li>
+                    ))}
+                </ol>
+                <p>results:</p>
+                <ol>
+                    { results.map((result, index) => (
+                        <li key={ `result-#${ index }` }>
+                            <p>{ result.correctAnswer ? 'JUSTE' : 'FAUX' } ({ result.elapsedTime } secondes)</p>
+                        </li>
+                    ))}
+                </ol>
+            </section>
+        </article>
     );
 }
 
