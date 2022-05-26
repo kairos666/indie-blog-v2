@@ -1,5 +1,6 @@
 import { FC, ReactNode, useCallback, useEffect } from 'react';
 import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
+import QuestionnaireHeader from './QuestionnaireHeader';
 
 type TestViewProps = {
     displayDetailHandler: (children:ReactNode) => void
@@ -19,7 +20,8 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
         toggleSelectedTable: state.test.toggleSelectedTable,
         changeTestConfig: state.test.changeTestConfig
     }));
-    const { questions, results, currentQuestionIndex } = useMathTeacherState(state => state.test.questionnaire);
+    const testQuestionary = useMathTeacherState(state => state.test.questionnaire);
+    const { questions, results, currentQuestionIndex } = testQuestionary;
 
     const startTestHandler = useCallback(() => { displayDetailHandler(null); startTest(); }, [startTest, displayDetailHandler]);
     const endTestHandler = useCallback(() => { displayDetailHandler(null); endTest(); }, [endTest, displayDetailHandler]);
@@ -48,11 +50,15 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
 
     return (
         <>
+            <QuestionnaireHeader 
+                canChangeTestConfig={ canChangeTestConfig } 
+                testState={ testState } 
+                testConfig={ testConfig } 
+                testQuestionary={ testQuestionary } 
+                triggerTestSetupHandler={ triggerTestConfigSetupHandler }
+            />
             <p>test state: { testState }</p>
             <p>available tables: { availableTables.join(', ') }</p>
-            <p>selected tables: { testConfig.selectedTables.join(', ') }</p>
-            <p>test mode: { testConfig.testMode }</p>
-            <p>test style: { testConfig.testStyle }</p>
             <br />
             <h2>Questionnaire overview</h2>
             <p>questions (current question in test #{ currentQuestionIndex + 1 }):</p>

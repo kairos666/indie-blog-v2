@@ -1,0 +1,84 @@
+@use "sass:math";
+@import "variables";
+@import "mixins";
+@import "include-media-mixins";
+
+.qh-Header {
+
+}
+
+.qh-Header_SubContainer {
+    padding: $gutter;
+    &.qh-Header_SubContainer--test-setup {
+        background-color: rgba($app-shadow-color, 0.35);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: $gutter;
+    }
+    &.qh-Header_SubContainer--test-proceeding {
+        background-color: rgba($app-shadow-color, 0.15);
+    }
+}
+
+.qh-Setting {
+    flex:0 1 auto;
+    margin-block: 0;
+
+    dd {
+        display: inline-block;
+        margin-inline-start: 0;
+        margin-block-start: $sm-gutter;
+        padding-inline: $xs-gutter;
+        background-color: $app-accent-color;
+        color: white;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        cursor: pointer;
+
+        &[data-disabled="true"] {
+            background-color: rgba($app-accent-color, 0.25);
+            cursor: not-allowed;
+        }
+    }
+
+    &.qh-Setting--mono-value {
+
+    }
+    &.qh-Setting--multi-value dd {
+        background-color: transparent;
+        border-radius: 0;
+        padding-inline: 0;
+
+        *:not(:first-child) {
+            margin-inline-start: $xs-gutter;
+        }
+    }
+}
+
+.qh-Entry {
+    display: inline-block;
+    background-color: $app-accent-color;
+    border-radius: 0.25rem;
+    text-align: center;
+    padding: 0 $xs-gutter;
+
+    dd[data-disabled="true"] & {
+        background-color: rgba($app-accent-color, 0.25);
+    }
+}
+
+.qh-ConfigSetupTriggerBtn {
+    margin-left: auto; // everything aligned left but this one
+    @include GenericButtonStyles;
+    &:hover, &:focus {
+        background-color: rgba($app-accent-color, 0.25);
+    }
+    &:active {
+        background-color: $app-accent-color;
+    }
+
+    @include media("<=small") {
+        padding: $gutter;
+    }
+}
