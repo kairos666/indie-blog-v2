@@ -1,0 +1,51 @@
+@import "variables";
+@import "mixins";
+
+.qcf-ModalTitle {
+    @include ModalTitle;
+}
+
+.qcf-Form {
+    @include GenericFormStyles;
+}
+
+.qcf-ModalActions {
+    @include ModalActions;
+    margin-block-start: $xl-gutter;
+}
+
+.qcf-TextMuted {
+    margin-block-start: $xs-gutter;
+    opacity: 0.75;
+}
+
+.qcf-FormSection {
+    & + .qcf-FormSection {
+        margin-block-start: $lg-gutter;
+    }
+
+    h4 {
+        margin-block: 0 $sm-gutter;
+    }
+}
+
+.qcf-CustomRadioGroup {
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: $xs-gutter;
+
+    h4 { flex:1 1 100%; }
+    button { flex:1 1 auto; }
+}
+
+.qcf-SelectorBtn {
+    @include GenericButtonStyles;
+    &:hover, &:focus {
+        background-color: rgba($app-accent-color, 0.25);
+    }
+    &:active, &[aria-checked="true"] {
+        background-color: $app-accent-color;
+        color: white;
+    }
+}
