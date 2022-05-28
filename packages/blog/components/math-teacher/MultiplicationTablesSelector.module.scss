@@ -18,13 +18,16 @@
 
 }
 
-.mts-SelectorBtn {
+.sr-only { @include sr-only; }
+
+.mts-SelectorBtn.mts-SelectorBtn {
     @include GenericButtonStyles;
     &:hover, &:focus {
         background-color: rgba($app-accent-color, 0.25);
     }
-    &:active, &[aria-pressed="true"] {
+    &:active, &[aria-checked="true"] {
         background-color: $app-accent-color;
+        color: white;
     }
 
     @include media("<=small") {
