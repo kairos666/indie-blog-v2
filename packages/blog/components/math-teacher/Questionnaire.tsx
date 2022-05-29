@@ -15,17 +15,14 @@ const Questionnaire:FC<QuestionnaireProps> = () => {
 
     const nextQuestionHandler = useCallback((answer:string) => {
         const parsedAnswer:number = parseInt(answer);
-        // get elapsed time since start of question
-        // TODO
 
         // check if answer is correct
         const currentQuestion = questionnaire.questions[questionnaire.currentQuestionIndex];
 
         answerQuestion({ 
             correctAnswer: (parsedAnswer === currentQuestion.result), 
-            elapsedTime: Math.ceil(Math.random() * 10000), 
-            userAnswer: parsedAnswer,
-            status:"answered"
+            answerTimestamp: new Date().getTime(), 
+            userAnswer: parsedAnswer
         });
     }, [questionnaire, answerQuestion]);
 
@@ -105,11 +102,10 @@ type TestResultsProps = {
 }
 
 export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
-    const isAbandonnedGame:boolean = questionnaire.results.some(result => (result.status === "forfeit"));
     const winRatio = Math.round(100 * questionnaire.results.filter(result => result.correctAnswer).length / questionnaire.results.length);
     const errorCount:number = questionnaire.results.filter(result => !result.correctAnswer).length;
     const questionsCount:number = questionnaire.results.length;
-    const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss"|"abandonned-game" = (isAbandonnedGame)
+    const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss"|"abandonned-game" = (questionnaire.overallResult === "forfeit")
         ? "abandonned-game"
         : (winRatio === 100)
         ? "full-win"

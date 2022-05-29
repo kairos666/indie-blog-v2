@@ -11,7 +11,9 @@ export interface TestConfig {
 }
 export interface TestQuestionary {
     questions: MTableMultipleChoicesQuestionEntry[]
-    results: { correctAnswer:boolean, elapsedTime:number, userAnswer: number, status:"timeout"|"answered"|"forfeit" }[]
+    results: { correctAnswer:boolean, answerTimestamp:number, userAnswer: number }[]
+    overallResult: "completed"|"forfeit"|"timeout"|null
+    testStartTimestamp:number
     currentQuestionIndex:number
 }
 export interface MathTeacherState {
@@ -29,9 +31,11 @@ export interface MathTeacherState {
         testConfig: TestConfig
         questionnaire: TestQuestionary
         startTest: () => void
-        endTest: (isForfeit:boolean) => void
+        completeTest: () => void
+        forfeitTest: () => void
+        timeoutTest: () => void
         resetTest: () => void
-        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer: number, status:"timeout"|"answered"|"forfeit" }) => void
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, answerTimestamp:number, userAnswer: number }) => void
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => void
     }
 } 
@@ -106,6 +110,8 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
         questionnaire: {
             questions: [],
             results: [],
+            overallResult: null,
+            testStartTimestamp: NaN,
             currentQuestionIndex: 0
         },
         startTest: () => {
@@ -116,28 +122,40 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 draft.test.testState = "RUN_TEST";
 
                 // generate questions based on current config
+                draft.test.questionnaire.overallResult = null;
+                draft.test.questionnaire.testStartTimestamp = new Date().getTime();
                 draft.test.questionnaire.currentQuestionIndex = 0;
                 draft.test.questionnaire.results = [];
                 draft.test.questionnaire.questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder(draft.test.testConfig.selectedTables));
+
+                // TODO timers for soft and hard modes
             }));
         },
-        endTest: (isForfeit:boolean) => {
+        completeTest: () => {
             const currentTestState = get().test.testState;
 
             // allow only when test in run stage
             if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "TEST_RESULTS";
+                draft.test.questionnaire.overallResult = "completed";
+            }));
+        },
+        forfeitTest: () => {
+            const currentTestState = get().test.testState;
 
-                // if forfeit, fill missing answers
-                if(isForfeit) {
-                    const forfeitResults = new Array(draft.test.questionnaire.questions.length - draft.test.questionnaire.results.length).fill({ 
-                        correctAnswer: false, 
-                        elapsedTime:NaN, 
-                        userAnswer: NaN, 
-                        status:"forfeit" 
-                    });
-                    draft.test.questionnaire.results.push(...forfeitResults);
-                }
+            // allow only when test in run stage
+            if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
+                draft.test.testState = "TEST_RESULTS";
+                draft.test.questionnaire.overallResult = "forfeit";
+            }));
+        },
+        timeoutTest: () => {
+            const currentTestState = get().test.testState;
+
+            // allow only when test in run stage
+            if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
+                draft.test.testState = "TEST_RESULTS";
+                draft.test.questionnaire.overallResult = "timeout";
             }));
         },
         resetTest: () => {
@@ -146,12 +164,14 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
             // allow only when test in run or end state stage
             if(currentTestState === "RUN_TEST" || currentTestState === "TEST_RESULTS") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "PRE_TEST";
+                draft.test.questionnaire.overallResult = null;
+                draft.test.questionnaire.testStartTimestamp = NaN;
                 draft.test.questionnaire.currentQuestionIndex = 0;
                 draft.test.questionnaire.results = [];
                 draft.test.questionnaire.questions = [];
             }));
         },
-        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer:number, status:"timeout"|"answered"|"forfeit" }) => {
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, answerTimestamp:number, userAnswer:number }) => {
             // forbid test answers outside test runs
             if(get().test.testState !== "RUN_TEST") throw new Error(`test question answers forbidden outside of test run`);
 
@@ -162,7 +182,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
 
             // after update state - trigger questionnaire end if all questions have been answered
             const newState:MathTeacherState = get();
-            if(newState.test.questionnaire.currentQuestionIndex >= newState.test.questionnaire.questions.length) newState.test.endTest(false);
+            if(newState.test.questionnaire.results.length >= newState.test.questionnaire.questions.length) newState.test.completeTest();
         },
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => {
             // forbid test config changes when not in test configuration stage
@@ -173,6 +193,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 if(newTestConfig.selectedTables) draft.test.testConfig.selectedTables = newTestConfig.selectedTables;
                 if(newTestConfig.testMode) draft.test.testConfig.testMode = newTestConfig.testMode;
                 if(newTestConfig.testStyle) draft.test.testConfig.testStyle = newTestConfig.testStyle;
+                if(newTestConfig.durationTimePerQuestions) draft.test.testConfig.durationTimePerQuestions = newTestConfig.durationTimePerQuestions;
             }));
         }
     }

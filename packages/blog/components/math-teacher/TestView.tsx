@@ -15,9 +15,9 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
         testConfig: state.test.testConfig,
         canChangeTestConfig: (state.test.testState === "PRE_TEST")
     }));
-    const { startTest, endTest, resetTest } = useMathTeacherState(state => ({
+    const { startTest, forfeitTest, resetTest } = useMathTeacherState(state => ({
         startTest: state.test.startTest,
-        endTest: state.test.endTest,
+        forfeitTest: state.test.forfeitTest,
         resetTest: state.test.resetTest,
         toggleSelectedTable: state.test.toggleSelectedTable,
         changeTestConfig: state.test.changeTestConfig
@@ -25,7 +25,7 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
     const testQuestionary = useMathTeacherState(state => state.test.questionnaire);
 
     const startTestHandler = useCallback(() => { displayDetailHandler(null); startTest(); }, [startTest, displayDetailHandler]);
-    const endTestHandler = useCallback(() => { displayDetailHandler(null); endTest(true); }, [endTest, displayDetailHandler]);
+    const cancelTestHandler = useCallback(() => { displayDetailHandler(null); forfeitTest(); }, [forfeitTest, displayDetailHandler]);
     const resetTestHandler = useCallback(() => { displayDetailHandler(null); resetTest(); }, [resetTest, displayDetailHandler]);
     const triggerTestConfigSetupHandler = useCallback(() => {
         displayDetailHandler(<QuestionnaireConfigurator onCancelConfigurator={ () => displayDetailHandler(null) } />);
@@ -51,7 +51,7 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
                             <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ triggerTestConfigSetupHandler }>Configurer</button>
                         </> 
                     : (testState === "RUN_TEST")
-                    ?   <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ endTestHandler }>Abandonner</button>
+                    ?   <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ cancelTestHandler }>Abandonner</button>
                     : (testState === "TEST_RESULTS")
                     ?   <button type="button" className={ styles['tv-testBtn'] } onClick={ resetTestHandler }>Retour</button>
                     : null 
