@@ -37,7 +37,9 @@ const Questionnaire:FC<QuestionnaireProps> = () => {
 
         default:
             return (
-                <p>configure test first and then start it!</p>
+                <aside className={ styles['q-EmptyState'] }>
+                    <p>Configure ton test avant de démarrer!<br />Clic sur le bouton "Configurer"</p>
+                </aside>
             )
     }
 }

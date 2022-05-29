@@ -48,7 +48,7 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
                 { (testState === "PRE_TEST") 
                     ?   <>
                             <button type="button" className={ styles['tv-testBtn'] } onClick={ startTestHandler }>Démarrer</button>
-                            <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ triggerTestConfigSetupHandler }>configure</button>
+                            <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ triggerTestConfigSetupHandler }>Configurer</button>
                         </> 
                     : (testState === "RUN_TEST")
                     ?   <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ endTestHandler }>Abandonner</button>
