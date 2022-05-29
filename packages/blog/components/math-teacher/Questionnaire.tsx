@@ -100,10 +100,13 @@ type TestResultsProps = {
 }
 
 export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
+    const isAbandonnedGame:boolean = (questionnaire.results.length < questionnaire.questions.length);
     const winRatio = Math.round(100 * questionnaire.results.filter(result => result.correctAnswer).length / questionnaire.results.length);
     const errorCount:number = questionnaire.results.filter(result => !result.correctAnswer).length;
     const questionsCount:number = questionnaire.results.length;
-    const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss" = (winRatio === 100)
+    const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss"|"abandonned-game" = (isAbandonnedGame)
+        ? "abandonned-game"
+        : (winRatio === 100)
         ? "full-win"
         : (winRatio >= 85)
         ? "partial-win"
@@ -133,6 +136,16 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
                         <p>Pas trop mal! Encore quelques efforts, tu fais un peu trop d'erreurs encore.</p>
                         <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' } commises sur { questionsCount } questions.</p>
                         <p>Il te faut encore réviser te tables de multiplications.</p>
+                    </header>
+                </section>
+            );
+
+        case "abandonned-game":
+            return (
+                <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
+                    <header className={ styles["q-Results_Head"] }>
+                        <p>Test abandonné!</p>
+                        <p>Tu peux recommencer un autre test ou réviser tes tables si tu en as besoin.</p>
                     </header>
                 </section>
             );
