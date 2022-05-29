@@ -14,7 +14,7 @@
     "gray-matter": "^4.0.3",
     "immer": "^9.0.14",
     "kai-elo-rating": "^1.1.0",
-    "kai-multiplication-table-teacher": "^0.1.0",
+    "kai-multiplication-table-teacher": "^0.1.1",
     "mdx-bundler": "^8.0.1",
     "next": "12.1.0",
     "react": "17.0.2",
