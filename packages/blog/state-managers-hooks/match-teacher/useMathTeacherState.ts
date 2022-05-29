@@ -30,6 +30,7 @@ export interface MathTeacherState {
         startTest: () => void
         endTest: () => void
         resetTest: () => void
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number }) => void
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => void
     }
 } 
@@ -132,7 +133,23 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
             // allow only when test in run or end state stage
             if(currentTestState === "RUN_TEST" || currentTestState === "TEST_RESULTS") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "PRE_TEST";
+                draft.test.questionnaire.currentQuestionIndex = 0;
+                draft.test.questionnaire.results = [];
+                draft.test.questionnaire.questions = [];
             }));
+        },
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number }) => {
+            // forbid test answers outside test runs
+            if(get().test.testState !== "RUN_TEST") throw new Error(`test question answers forbidden outside of test run`);
+
+            set(produce((draft:MathTeacherState) => {
+                draft.test.questionnaire.results = [...draft.test.questionnaire.results, submittedAnswer];
+                draft.test.questionnaire.currentQuestionIndex++;
+            }));
+
+            // after update state - trigger questionnaire end if all questions have been answered
+            const newState:MathTeacherState = get();
+            if(newState.test.questionnaire.currentQuestionIndex >= newState.test.questionnaire.questions.length) newState.test.endTest();
         },
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => {
             // forbid test config changes when not in test configuration stage

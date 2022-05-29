@@ -1,5 +1,6 @@
 import { FC, ReactNode, useCallback, useEffect } from 'react';
 import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
+import Questionnaire from './Questionnaire';
 import QuestionnaireConfigurator from './QuestionnaireConfigurator';
 import QuestionnaireHeader from './QuestionnaireHeader';
 import styles from './TestView.module.scss';
@@ -56,23 +57,7 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
                     : null 
                 }
             </QuestionnaireHeader>
-            <section>
-                <ol>
-                    { questions.map((question, index) => (
-                        <li key={ `question-#${ index }` }>
-                            <p>{ question.mainParam } X { question.multiplicator } = { question.result } (choices: { question.choices.join(', ') })</p>
-                        </li>
-                    ))}
-                </ol>
-                <p>results:</p>
-                <ol>
-                    { results.map((result, index) => (
-                        <li key={ `result-#${ index }` }>
-                            <p>{ result.correctAnswer ? 'JUSTE' : 'FAUX' } ({ result.elapsedTime } secondes)</p>
-                        </li>
-                    ))}
-                </ol>
-            </section>
+            <Questionnaire />
         </article>
     );
 }

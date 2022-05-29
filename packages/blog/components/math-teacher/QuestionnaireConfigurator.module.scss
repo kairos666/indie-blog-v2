@@ -48,4 +48,11 @@
         background-color: $app-accent-color;
         color: white;
     }
+    &:disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+        color: lightgrey;
+        background-color: transparent;
+        border-color: lightgrey;
+    }
 }

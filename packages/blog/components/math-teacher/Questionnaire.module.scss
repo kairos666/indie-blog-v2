@@ -1,0 +1,116 @@
+@use "sass:color";
+@import "variables";
+@import "mixins";
+@import "include-media-mixins";
+
+.q-Question {
+    fieldset {
+        border:0 none;
+        padding:0;
+        margin:0;
+    }
+
+    legend {
+        display:block;
+        font-size: 7.5em;
+        white-space: pre-wrap;
+        padding-block: $gutter;
+        text-align: center;
+
+        @include media(">small") {
+            padding-block: $xl-gutter;
+        }
+    }
+
+    &.q-Question--multiple-choices {
+        menu {
+            padding-inline: $gutter;
+            margin-block: $gutter;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            gap: $gutter;
+
+            @include media(">small") {
+                padding-inline: $xl-gutter;
+                margin-block: $xl-gutter;
+            }
+        }
+
+        button {
+            @include GenericButtonStyles;
+            min-width: 6rem;
+            font-size: 3em;
+            padding: $sm-gutter $gutter;
+            text-align: center;
+
+            &:nth-child(3n + 1) { 
+                $adjustedColor: color.adjust($app-accent-color, $hue: 240);
+                border-color: $adjustedColor;
+
+                &:hover, &:focus, &:active {
+                    background-color: $adjustedColor;
+                }
+            }
+            &:nth-child(3n + 2) { 
+                $adjustedColor: color.adjust($app-accent-color, $hue: 0);
+                border-color: $adjustedColor;
+
+                &:hover, &:focus, &:active {
+                    background-color: $adjustedColor;
+                }
+            }
+            &:nth-child(3n + 3) { 
+                $adjustedColor: color.adjust($app-accent-color, $hue: -240);
+                border-color: $adjustedColor;
+
+                &:hover, &:focus, &:active {
+                    background-color: $adjustedColor;
+                }
+            }
+        }
+    }
+    &.q-Question--direct-input {
+        label {
+            display:block;
+            font-size: 7.5em;
+            white-space: pre-wrap;
+            padding-block: $gutter;
+            text-align: center;
+
+            @include media(">small") {
+                padding-block: $xl-gutter;
+            }
+        }
+
+        input {
+            display: block;
+            margin-inline: auto;
+            width: min(400px, unquote("calc(100% - #{ 2 * $gutter })"));
+            padding: 0.375rem 0.75rem;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 400;
+            line-height: 1.5;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            appearance: none;
+            border-radius: 0.25rem;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
+            &:focus {
+                outline-color: teal;
+                border-color: teal;
+            }
+        }
+
+        button {
+            @include GenericButtonStyles;
+            display: block;
+            margin-block-start: $lg-gutter;
+            margin-inline: auto;
+            width: min(400px, unquote("calc(100% - #{ 2 * $gutter })"));
+        }
+    }
+}
