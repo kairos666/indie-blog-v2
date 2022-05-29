@@ -10,7 +10,7 @@ export interface TestConfig {
 }
 export interface TestQuestionary {
     questions: MTableMultipleChoicesQuestionEntry[]
-    results: { correctAnswer:boolean, elapsedTime:number }[]
+    results: { correctAnswer:boolean, elapsedTime:number, userAnswer: number }[]
     currentQuestionIndex:number
 }
 export interface MathTeacherState {
@@ -30,7 +30,7 @@ export interface MathTeacherState {
         startTest: () => void
         endTest: () => void
         resetTest: () => void
-        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number }) => void
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer: number }) => void
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => void
     }
 } 
@@ -138,7 +138,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 draft.test.questionnaire.questions = [];
             }));
         },
-        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number }) => {
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer:number }) => {
             // forbid test answers outside test runs
             if(get().test.testState !== "RUN_TEST") throw new Error(`test question answers forbidden outside of test run`);
 

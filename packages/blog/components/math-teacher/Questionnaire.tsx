@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useState } from 'react';
-import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { TestQuestionary, useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
 import { MTableMultipleChoicesQuestionEntry } from 'kai-multiplication-table-teacher/types/types';
 import styles from './Questionnaire.module.scss';
 
@@ -13,14 +13,15 @@ const Questionnaire:FC<QuestionnaireProps> = () => {
         answerQuestion: state.test.answerQuestion
     }));
 
-    const nextQuestionHandler = useCallback((answer:number) => {
+    const nextQuestionHandler = useCallback((answer:string) => {
+        const parsedAnswer:number = parseInt(answer);
         // get elapsed time since start of question
         // TODO
 
         // check if answer is correct
         const currentQuestion = questionnaire.questions[questionnaire.currentQuestionIndex];
 
-        answerQuestion({ correctAnswer: (answer === currentQuestion.result), elapsedTime: Math.ceil(Math.random() * 10000) })
+        answerQuestion({ correctAnswer: (parsedAnswer === currentQuestion.result), elapsedTime: Math.ceil(Math.random() * 10000), userAnswer: parsedAnswer });
     }, [questionnaire, answerQuestion]);
 
     switch(true) {
@@ -31,9 +32,7 @@ const Questionnaire:FC<QuestionnaireProps> = () => {
             return (<TestQuestionMultiChoices questionEntry={ questionnaire.questions[questionnaire.currentQuestionIndex] } nextQuestionHandler={ nextQuestionHandler }/>)
 
         case (testState === "TEST_RESULTS"):
-            return (
-                <p>show questionnaire results: { questionnaire.results.map(result => result.correctAnswer ? 'juste' : 'faux').join(', ') }</p>
-            )
+            return (<TestResults questionnaire={ questionnaire } />);
 
         default:
             return (
@@ -48,21 +47,25 @@ export default Questionnaire;
 
 type TestQuestionDirectInputProps = {
     questionEntry:MTableMultipleChoicesQuestionEntry
-    nextQuestionHandler: (answer:number) => void
+    nextQuestionHandler: (answer:string) => void
 };
 
 export const TestQuestionDirectInput:FC<TestQuestionDirectInputProps> = ({ questionEntry, nextQuestionHandler }) => {
     const [answer, setAnswer] = useState('');
+    const inputEltRef = useRef(null);
 
-    // reset input when question change
-    useEffect(() => setAnswer(''), [questionEntry]);
+    // reset input when question change and setup focus
+    useEffect(() => {
+        setAnswer('');
+        (inputEltRef.current as unknown as HTMLInputElement).focus();
+    }, [questionEntry]);
 
     return (
         <section className={ [styles['q-Question'], styles['q-Question--direct-input']].join(' ') }>
-            <form onSubmit={ evt => { evt.preventDefault(); nextQuestionHandler((answer as unknown as number)) } }>
+            <form onSubmit={ evt => { evt.preventDefault(); nextQuestionHandler(answer) } }>
                 <label htmlFor="test-question-calculus-label">{ `${ questionEntry.mainParam } X ${ questionEntry.multiplicator }` }</label>
-                <input type="number" id="test-question-calculus-label" autoComplete="off" min="0" step="1" value={ answer } name="test-question-calculus-label" onChange={ evt => setAnswer(parseInt(evt.target.value)) } required />
-                <button type="button" onClick={ () => { nextQuestionHandler(questionEntry.result) } }>Valider ma réponse</button>
+                <input type="number" ref={ inputEltRef } id="test-question-calculus-label" autoComplete="off" min="0" step="1" value={ answer.toString() } name="test-question-calculus-label" onChange={ evt => setAnswer(evt.target.value) } required />
+                <button type="submit">Valider ma réponse</button>
             </form>
         </section>
     )
@@ -70,7 +73,7 @@ export const TestQuestionDirectInput:FC<TestQuestionDirectInputProps> = ({ quest
 
 type TestQuestionMultiChoicesProps = {
     questionEntry:MTableMultipleChoicesQuestionEntry
-    nextQuestionHandler: (answer:number) => void
+    nextQuestionHandler: (answer:string) => void
 };
 
 export const TestQuestionMultiChoices:FC<TestQuestionMultiChoicesProps> = ({ questionEntry, nextQuestionHandler }) => {
@@ -83,11 +86,21 @@ export const TestQuestionMultiChoices:FC<TestQuestionMultiChoicesProps> = ({ que
                 <menu>
                     { questionEntry.choices.map(choice => {
                         return (
-                            <button type="submit" title="Je valide cette réponse" onClick={ evt => { (evt.target as HTMLButtonElement).blur(); nextQuestionHandler(choice) } }>{ choice }</button>
+                            <button key={ `question-choice-${ choice }` } type="submit" title="Je valide cette réponse" onClick={ evt => { (evt.target as HTMLButtonElement).blur(); nextQuestionHandler(choice) } }>{ choice }</button>
                         )
                     })}
                 </menu>
             </form>
         </section>
     )
+}
+
+type TestResultsProps = {
+    questionnaire: TestQuestionary
+}
+
+export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
+    return (
+        <p>show questionnaire results: { questionnaire.results.map(result => result.correctAnswer ? 'juste' : 'faux').join(', ') }</p>
+    );
 }
