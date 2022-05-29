@@ -6,11 +6,12 @@ import { multiplicationTableBatchQuestionsBuilder, multiplicationTableBuilder } 
 export interface TestConfig {
     testMode: "NO_TIME_LIMIT"|"SOFT_TIME_LIMIT"|"HARD_TIME_LIMIT"
     testStyle: "MULTIPLE_CHOICES"|"DIRECT_INPUT"
+    durationTimePerQuestions: number
     selectedTables: number[]
 }
 export interface TestQuestionary {
     questions: MTableMultipleChoicesQuestionEntry[]
-    results: { correctAnswer:boolean, elapsedTime:number, userAnswer: number }[]
+    results: { correctAnswer:boolean, elapsedTime:number, userAnswer: number, status:"timeout"|"answered"|"forfeit" }[]
     currentQuestionIndex:number
 }
 export interface MathTeacherState {
@@ -28,9 +29,9 @@ export interface MathTeacherState {
         testConfig: TestConfig
         questionnaire: TestQuestionary
         startTest: () => void
-        endTest: () => void
+        endTest: (isForfeit:boolean) => void
         resetTest: () => void
-        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer: number }) => void
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer: number, status:"timeout"|"answered"|"forfeit" }) => void
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => void
     }
 } 
@@ -99,6 +100,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
         testConfig: {
             testMode: "NO_TIME_LIMIT",
             testStyle: "MULTIPLE_CHOICES",
+            durationTimePerQuestions: 10,
             selectedTables: []
         },
         questionnaire: {
@@ -119,12 +121,23 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 draft.test.questionnaire.questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder(draft.test.testConfig.selectedTables));
             }));
         },
-        endTest: () => {
+        endTest: (isForfeit:boolean) => {
             const currentTestState = get().test.testState;
 
             // allow only when test in run stage
             if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "TEST_RESULTS";
+
+                // if forfeit, fill missing answers
+                if(isForfeit) {
+                    const forfeitResults = new Array(draft.test.questionnaire.questions.length - draft.test.questionnaire.results.length).fill({ 
+                        correctAnswer: false, 
+                        elapsedTime:NaN, 
+                        userAnswer: NaN, 
+                        status:"forfeit" 
+                    });
+                    draft.test.questionnaire.results.push(...forfeitResults);
+                }
             }));
         },
         resetTest: () => {
@@ -138,7 +151,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 draft.test.questionnaire.questions = [];
             }));
         },
-        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer:number }) => {
+        answerQuestion: (submittedAnswer:{ correctAnswer:boolean, elapsedTime:number, userAnswer:number, status:"timeout"|"answered"|"forfeit" }) => {
             // forbid test answers outside test runs
             if(get().test.testState !== "RUN_TEST") throw new Error(`test question answers forbidden outside of test run`);
 
@@ -149,7 +162,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
 
             // after update state - trigger questionnaire end if all questions have been answered
             const newState:MathTeacherState = get();
-            if(newState.test.questionnaire.currentQuestionIndex >= newState.test.questionnaire.questions.length) newState.test.endTest();
+            if(newState.test.questionnaire.currentQuestionIndex >= newState.test.questionnaire.questions.length) newState.test.endTest(false);
         },
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => {
             // forbid test config changes when not in test configuration stage

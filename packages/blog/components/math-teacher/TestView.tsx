@@ -25,7 +25,7 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
     const testQuestionary = useMathTeacherState(state => state.test.questionnaire);
 
     const startTestHandler = useCallback(() => { displayDetailHandler(null); startTest(); }, [startTest, displayDetailHandler]);
-    const endTestHandler = useCallback(() => { displayDetailHandler(null); endTest(); }, [endTest, displayDetailHandler]);
+    const endTestHandler = useCallback(() => { displayDetailHandler(null); endTest(true); }, [endTest, displayDetailHandler]);
     const resetTestHandler = useCallback(() => { displayDetailHandler(null); resetTest(); }, [resetTest, displayDetailHandler]);
     const triggerTestConfigSetupHandler = useCallback(() => {
         displayDetailHandler(<QuestionnaireConfigurator onCancelConfigurator={ () => displayDetailHandler(null) } />);

@@ -21,7 +21,12 @@ const Questionnaire:FC<QuestionnaireProps> = () => {
         // check if answer is correct
         const currentQuestion = questionnaire.questions[questionnaire.currentQuestionIndex];
 
-        answerQuestion({ correctAnswer: (parsedAnswer === currentQuestion.result), elapsedTime: Math.ceil(Math.random() * 10000), userAnswer: parsedAnswer });
+        answerQuestion({ 
+            correctAnswer: (parsedAnswer === currentQuestion.result), 
+            elapsedTime: Math.ceil(Math.random() * 10000), 
+            userAnswer: parsedAnswer,
+            status:"answered"
+        });
     }, [questionnaire, answerQuestion]);
 
     switch(true) {
@@ -86,7 +91,7 @@ export const TestQuestionMultiChoices:FC<TestQuestionMultiChoicesProps> = ({ que
                 <menu>
                     { questionEntry.choices.map(choice => {
                         return (
-                            <button key={ `question-choice-${ choice }` } type="submit" title="Je valide cette réponse" onClick={ evt => { (evt.target as HTMLButtonElement).blur(); nextQuestionHandler(choice) } }>{ choice }</button>
+                            <button key={ `question-choice-${ choice }` } type="submit" title="Je valide cette réponse" onClick={ evt => { (evt.target as HTMLButtonElement).blur(); nextQuestionHandler(choice.toString()) } }>{ choice }</button>
                         )
                     })}
                 </menu>
@@ -100,7 +105,7 @@ type TestResultsProps = {
 }
 
 export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
-    const isAbandonnedGame:boolean = (questionnaire.results.length < questionnaire.questions.length);
+    const isAbandonnedGame:boolean = questionnaire.results.some(result => (result.status === "forfeit"));
     const winRatio = Math.round(100 * questionnaire.results.filter(result => result.correctAnswer).length / questionnaire.results.length);
     const errorCount:number = questionnaire.results.filter(result => !result.correctAnswer).length;
     const questionsCount:number = questionnaire.results.length;

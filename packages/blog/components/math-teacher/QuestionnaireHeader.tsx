@@ -2,6 +2,7 @@ import { FC, ReactNode, useCallback } from 'react';
 import { TestConfig, TestQuestionary } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
 import { testConfigLabels, testStateLabels } from '../../utils/Enum2LabelConverters';
 import styles from './QuestionnaireHeader.module.scss';
+import QuestionnaireProgress from './QuestionnaireProgress';
 
 type QuestionnaireHeaderProps = {
     canChangeTestConfig:boolean
@@ -38,7 +39,7 @@ const QuestionnaireHeader:FC<QuestionnaireHeaderProps> = ({ canChangeTestConfig,
         renderedTestRunnerHeader = (
             <div className={ [styles['qh-Header_SubContainer'], styles['qh-Header_SubContainer--test-proceeding']].join(' ') }>
                 <p>{ testStateLabels(testState) }</p>
-                <p>questions #{ testQuestionary.currentQuestionIndex + 1 } ({ testQuestionary.currentQuestionIndex + 1 }/{ testQuestionary.questions.length })</p>
+                <QuestionnaireProgress />
                 <menu>{ children }</menu>
             </div>
         );
