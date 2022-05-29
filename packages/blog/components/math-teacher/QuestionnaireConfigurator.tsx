@@ -9,13 +9,14 @@ type QuestionnaireConfiguratorProps = {
 };
 
 const QuestionnaireConfigurator:FC<QuestionnaireConfiguratorProps> = ({ onCancelConfigurator }) => {
-    const { currentlySelectedTables, testStyle, testMode, availableTables, toggleSelectedTable, changeTestConfig } = useMathTeacherState(state => ({
+    const { currentlySelectedTables, testStyle, testMode, availableTables, toggleSelectedTable, changeTestConfig, startTest } = useMathTeacherState(state => ({
         currentlySelectedTables: state.test.testConfig.selectedTables,
         testStyle: state.test.testConfig.testStyle,
         testMode: state.test.testConfig.testMode,
         availableTables: state.test.availableTables,
         toggleSelectedTable: state.test.toggleSelectedTable,
-        changeTestConfig: state.test.changeTestConfig
+        changeTestConfig: state.test.changeTestConfig,
+        startTest: state.test.startTest
     }));
 
     return (
@@ -40,6 +41,7 @@ const QuestionnaireConfigurator:FC<QuestionnaireConfiguratorProps> = ({ onCancel
                 </section>
             </div>
             <div className={ styles['qcf-ModalActions'] } role="group" aria-label="Actions liées à la configuration du test">
+                <button type="button" onClick={ () => { onCancelConfigurator(); startTest() } }>Démarrer le test</button>
                 <button type="button" onClick={ onCancelConfigurator }>Fermer le configurateur</button>
             </div>
         </form>
