@@ -100,7 +100,52 @@ type TestResultsProps = {
 }
 
 export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
-    return (
-        <p>show questionnaire results: { questionnaire.results.map(result => result.correctAnswer ? 'juste' : 'faux').join(', ') }</p>
-    );
+    const winRatio = Math.round(100 * questionnaire.results.filter(result => result.correctAnswer).length / questionnaire.results.length);
+    const errorCount:number = questionnaire.results.filter(result => !result.correctAnswer).length;
+    const questionsCount:number = questionnaire.results.length;
+    const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss" = (winRatio === 100)
+        ? "full-win"
+        : (winRatio >= 85)
+        ? "partial-win"
+        : (winRatio >= 65)
+        ? "average-win"
+        : "loss";
+
+    switch(resultGlobalState) {
+        case "full-win":
+            return (
+                <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
+                    <header className={ styles["q-Results_Head"] }><p>Parfait! Tu as fait un sans fautes.</p></header>
+                </section>
+            );
+
+        case "partial-win":
+            return (
+                <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
+                    <header className={ styles["q-Results_Head"] }><p>Bravo! C'est presque parfait, seulement <span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' }.</p></header>
+                </section>
+            );
+
+        case "average-win":
+            return (
+                <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
+                    <header className={ styles["q-Results_Head"] }>
+                        <p>Pas trop mal! Encore quelques efforts, tu fais un peu trop d'erreurs encore.</p>
+                        <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' } commises sur { questionsCount } questions.</p>
+                        <p>Il te faut encore réviser te tables de multiplications.</p>
+                    </header>
+                </section>
+            );
+
+        default:
+            return (
+                <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
+                    <header className={ styles["q-Results_Head"] }>
+                        <p>Ce n'est pas suffisant! Encore quelques efforts, tu fais trop d'erreurs pour le moment.</p>
+                        <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' } commises sur { questionsCount } questions.</p>
+                        <p>Il te faut encore réviser tes tables de multiplications.</p>
+                    </header>
+                </section>
+            );
+    }
 }

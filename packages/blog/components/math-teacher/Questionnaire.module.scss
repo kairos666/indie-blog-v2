@@ -144,3 +144,45 @@
         }
     }
 }
+
+.q-Results {
+    .q-Results_Head {
+        width: min(960px, unquote("calc(100% - #{ 2 * $gutter })"));
+        margin-block-start: $lg-gutter;
+        margin-inline:auto;
+        padding: $gutter;
+        border:1px solid $app-accent-color;
+        border-radius: 0.25rem;
+        background-color: rgba(white, 0.75);
+
+        p {
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+    }
+
+    .q-Results_ErrorCount {
+        color: $color-danger;
+    }
+
+    &.q-Results--full-win {
+        background: no-repeat url("/math-teacher/img/sesame-full-win.webp") 50% 100%;
+        background-size: contain;
+    }
+
+    &.q-Results--partial-win {
+        background: no-repeat url("/math-teacher/img/sesame-partial-win.png") 50% 100%;
+        background-size: 35%;
+    }
+
+    &.q-Results--average-win {
+        background: no-repeat url("/math-teacher/img/sesame-average-win.png") 50% 100%;
+        background-size: 15%;
+    }
+
+    &.q-Results--loss {
+        background: no-repeat url("/math-teacher/img/sesame-loss.webp") 50% 100%;
+        background-size: 15%;
+    }
+}
