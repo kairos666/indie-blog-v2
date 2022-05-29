@@ -275,12 +275,22 @@ describe("kai-multiplication-table-teacher", () => {
         it(`generate only valid choices for each entries (integers only check)`, () => {
             const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]));
 
-            // correct if all questions have all integres choices
+            // correct if all questions have all integers choices
             const isProposalsIntegersOnly:boolean = questions.every(questionEntry => {
                 return questionEntry.choices.every(proposal => Number.isInteger(proposal));
             });
             
             expect(isProposalsIntegersOnly).toBeTruthy();
+        });
+        it(`generate only valid choices for each entries (positive and not zero values)`, () => {
+            const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]));
+
+            // correct if all questions positive and 1+ values
+            const isProposalsNonZeroPositive:boolean = questions.every(questionEntry => {
+                return questionEntry.choices.every(proposal => (proposal >= 1));
+            });
+            
+            expect(isProposalsNonZeroPositive).toBeTruthy();
         });
         it(`generate unique choices for each entries (choice duplication check)`, () => {
             const questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder([1, 5, 9]));

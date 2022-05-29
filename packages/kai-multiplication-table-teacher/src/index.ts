@@ -71,7 +71,7 @@ export function multiplicationTableBatchQuestionsBuilder(tables:MTable|MultiMTab
 			// console.log(`result: ${ entry.result } choice: ${ generatedChoice } (amplitude: ${ config.proposalVariationAmplitude })`);
 
 			// check if generated choice respect constraints and push it if yes
-			if(generatedChoice !== entry.result && !resultChoices.includes(generatedChoice)) resultChoices.push(generatedChoice);
+			if(generatedChoice !== entry.result && !resultChoices.includes(generatedChoice) && generatedChoice >= 1) resultChoices.push(generatedChoice);
 
 			// increment safety loop count
 			safetyLoopMaxCount++;
