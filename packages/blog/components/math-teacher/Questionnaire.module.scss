@@ -166,6 +166,10 @@
         color: $color-danger;
     }
 
+    .q-Results_ValidCount {
+        color: $color-valid;
+    }
+
     &.q-Results--full-win {
         background: no-repeat url("/math-teacher/img/sesame-full-win.webp") 50% 100%;
         background-size: contain;
@@ -181,7 +185,8 @@
         background-size: 15%;
     }
 
-    &.q-Results--loss {
+    &.q-Results--loss,
+    &.q-Results--timeout {
         background: no-repeat url("/math-teacher/img/sesame-loss.webp") 50% 100%;
         background-size: 15%;
     }

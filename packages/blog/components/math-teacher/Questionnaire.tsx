@@ -104,9 +104,13 @@ type TestResultsProps = {
 export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
     const winRatio = Math.round(100 * questionnaire.results.filter(result => result.correctAnswer).length / questionnaire.results.length);
     const errorCount:number = questionnaire.results.filter(result => !result.correctAnswer).length;
-    const questionsCount:number = questionnaire.results.length;
-    const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss"|"abandonned-game" = (questionnaire.overallResult === "forfeit")
+    const questionsCount:number = questionnaire.questions.length;
+    const answeredQuestionsCount:number = questionnaire.results.length;
+    const validAnswersCount:number = answeredQuestionsCount - errorCount;
+    const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss"|"timeout"|"abandonned-game" = (questionnaire.overallResult === "forfeit")
         ? "abandonned-game"
+        : (questionnaire.overallResult === "timeout")
+        ? "timeout"
         : (winRatio === 100)
         ? "full-win"
         : (winRatio >= 85)
@@ -147,6 +151,19 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
                     <header className={ styles["q-Results_Head"] }>
                         <p>Test abandonné!</p>
                         <p>Tu peux recommencer un autre test ou réviser tes tables si tu en as besoin.</p>
+                    </header>
+                </section>
+            );
+
+        case "timeout":
+            return (
+                <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
+                    <header className={ styles["q-Results_Head"] }>
+                        <p>Test raté!</p>
+                        <p>Tu as pris trop de temps pour répondre c'est dommage!</p>
+                        <p><span className={ styles["q-Results_ValidCount"] }>{ validAnswersCount }</span> réponse{ (validAnswersCount > 1) ? 's' : '' } correcte{ (validAnswersCount > 1) ? 's' : '' }</p>
+                        <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' }</p>
+                        <p>{ answeredQuestionsCount } question{ (answeredQuestionsCount > 1) ? 's' : '' } répondue{ (answeredQuestionsCount > 1) ? 's' : '' } sur { questionsCount }</p>
                     </header>
                 </section>
             );
