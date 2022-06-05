@@ -2,6 +2,8 @@ import create from 'zustand';
 import produce from 'immer';
 import { MTableMultipleChoicesQuestionEntry } from 'kai-multiplication-table-teacher/types/types';
 import { multiplicationTableBatchQuestionsBuilder, multiplicationTableBuilder } from 'kai-multiplication-table-teacher';
+import { Subscription } from 'rxjs';
+import { testHardTimerObservableBuilder, testSoftTimerObservableBuilder } from '../../utils/testTimerObservables';
 
 export interface TestConfig {
     testMode: "NO_TIME_LIMIT"|"SOFT_TIME_LIMIT"|"HARD_TIME_LIMIT"
@@ -14,6 +16,8 @@ export interface TestQuestionary {
     results: { correctAnswer:boolean, answerTimestamp:number, userAnswer: number }[]
     overallResult: "completed"|"forfeit"|"timeout"|null
     testStartTimestamp:number
+    testSoftSubscription:null|Subscription
+    testHardHandler:null|{ subscription:Subscription, answerRegisterCb:() => void }
     currentQuestionIndex:number
 }
 export interface MathTeacherState {
@@ -37,6 +41,7 @@ export interface MathTeacherState {
         resetTest: () => void
         answerQuestion: (submittedAnswer:{ correctAnswer:boolean, answerTimestamp:number, userAnswer: number }) => void
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => void
+        cleanupTimers: () => void
     }
 } 
 
@@ -112,77 +117,142 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
             results: [],
             overallResult: null,
             testStartTimestamp: NaN,
+            testSoftSubscription: null,
+            testHardHandler: null,
             currentQuestionIndex: 0
         },
         startTest: () => {
-            const currentTestState = get().test.testState;
+            const currentState = get();
+            const currentTestMode = currentState.test.testConfig.testMode;
+            const currentTestState = currentState.test.testState;
 
             // allow only when test in configuration stage
             if(currentTestState === "PRE_TEST") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "RUN_TEST";
+                const generatedQuestions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder(draft.test.testConfig.selectedTables));
 
                 // generate questions based on current config
                 draft.test.questionnaire.overallResult = null;
                 draft.test.questionnaire.testStartTimestamp = new Date().getTime();
                 draft.test.questionnaire.currentQuestionIndex = 0;
                 draft.test.questionnaire.results = [];
-                draft.test.questionnaire.questions = multiplicationTableBatchQuestionsBuilder(multiplicationTableBuilder(draft.test.testConfig.selectedTables));
+                draft.test.questionnaire.questions = generatedQuestions;
 
-                // TODO timers for soft and hard modes
+                if(currentTestMode === "SOFT_TIME_LIMIT") {
+                    // setup SOFT timer
+                    const softTimerObservable = testSoftTimerObservableBuilder(generatedQuestions.length, currentState.test.testConfig.durationTimePerQuestions);
+                    draft.test.questionnaire.testSoftSubscription = softTimerObservable.subscribe({ complete: () => {
+                        console.log("test soft time limit reached");
+                        get().test.timeoutTest();
+                    }});
+                } else if(currentTestMode === "HARD_TIME_LIMIT") {
+                    // setup HARD timer
+                    const { observable: hardTimerObservable, answerRegisterCb } = testHardTimerObservableBuilder(generatedQuestions.length, currentState.test.testConfig.durationTimePerQuestions);
+                    const testHardSubscription = hardTimerObservable.subscribe({
+                        next: () => {
+                            console.log("individual question time out");
+                            get().test.answerQuestion({ correctAnswer: false, answerTimestamp: new Date().getTime(), userAnswer: NaN }); // automatically push a wrong answer
+                        }
+                    });
+                    draft.test.questionnaire.testHardHandler = { subscription: testHardSubscription, answerRegisterCb };
+                }
             }));
         },
         completeTest: () => {
-            const currentTestState = get().test.testState;
+            const currentState = get();
+            const currentTestState = currentState.test.testState;
+
+            // cleanup timers
+            currentState.test.cleanupTimers(); 
 
             // allow only when test in run stage
             if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "TEST_RESULTS";
                 draft.test.questionnaire.overallResult = "completed";
+                draft.test.questionnaire.testSoftSubscription = null;
+                draft.test.questionnaire.testHardHandler = null;
             }));
         },
         forfeitTest: () => {
-            const currentTestState = get().test.testState;
+            const currentState = get();
+            const currentTestState = currentState.test.testState;
+
+            // cleanup timers
+            currentState.test.cleanupTimers(); 
 
             // allow only when test in run stage
             if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "TEST_RESULTS";
                 draft.test.questionnaire.overallResult = "forfeit";
+                draft.test.questionnaire.testSoftSubscription = null;
+                draft.test.questionnaire.testHardHandler = null;
             }));
         },
         timeoutTest: () => {
-            const currentTestState = get().test.testState;
+            const currentState = get();
+            const currentTestState = currentState.test.testState;
+
+            // cleanup timers
+            currentState.test.cleanupTimers(); 
 
             // allow only when test in run stage
             if(currentTestState === "RUN_TEST") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "TEST_RESULTS";
                 draft.test.questionnaire.overallResult = "timeout";
+                draft.test.questionnaire.testSoftSubscription = null;
+                draft.test.questionnaire.testHardHandler = null;
             }));
         },
         resetTest: () => {
-            const currentTestState = get().test.testState;
+            const currentState = get();
+            const currentTestState = currentState.test.testState;
+
+            // cleanup timers
+            currentState.test.cleanupTimers(); 
 
             // allow only when test in run or end state stage
             if(currentTestState === "RUN_TEST" || currentTestState === "TEST_RESULTS") set(produce((draft:MathTeacherState) => {
                 draft.test.testState = "PRE_TEST";
                 draft.test.questionnaire.overallResult = null;
                 draft.test.questionnaire.testStartTimestamp = NaN;
+                draft.test.questionnaire.testSoftSubscription = null;
+                draft.test.questionnaire.testHardHandler = null;
                 draft.test.questionnaire.currentQuestionIndex = 0;
                 draft.test.questionnaire.results = [];
                 draft.test.questionnaire.questions = [];
             }));
         },
         answerQuestion: (submittedAnswer:{ correctAnswer:boolean, answerTimestamp:number, userAnswer:number }) => {
-            // forbid test answers outside test runs
-            if(get().test.testState !== "RUN_TEST") throw new Error(`test question answers forbidden outside of test run`);
+            const currentState:MathTeacherState = get();
 
+            // forbid test answers outside test runs
+            if(currentState.test.testState !== "RUN_TEST") throw new Error(`test question answers forbidden outside of test run`);
+
+            const completeTestFunc = currentState.test.completeTest;
+            const answerRegisterCbFunc = (currentState?.test?.questionnaire?.testHardHandler)
+                ? currentState?.test?.questionnaire?.testHardHandler.answerRegisterCb
+                : false;
+            const answerIsLastOneFromTest:boolean = ((currentState.test.questionnaire.results.length + 1) >= currentState.test.questionnaire.questions.length);
+            
+            // ensure not pointing to inexistant question at end of test
+            const nextQuestionIndex:number = (answerIsLastOneFromTest)
+                ? currentState.test.questionnaire.questions.length - 1
+                : currentState.test.questionnaire.currentQuestionIndex + 1
+
+            // register answer
             set(produce((draft:MathTeacherState) => {
                 draft.test.questionnaire.results = [...draft.test.questionnaire.results, submittedAnswer];
-                draft.test.questionnaire.currentQuestionIndex++;
+                draft.test.questionnaire.currentQuestionIndex = nextQuestionIndex;
             }));
 
-            // after update state - trigger questionnaire end if all questions have been answered
-            const newState:MathTeacherState = get();
-            if(newState.test.questionnaire.results.length >= newState.test.questionnaire.questions.length) newState.test.completeTest();
+            // after answer registration actions
+            if(answerIsLastOneFromTest) {
+                // end test
+                completeTestFunc();
+            } else if(answerRegisterCbFunc) {
+                // HARD MODE - reset question timer
+                answerRegisterCbFunc();
+            }
         },
         changeTestConfig: (newTestConfig:Partial<TestConfig>) => {
             // forbid test config changes when not in test configuration stage
@@ -195,6 +265,15 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 if(newTestConfig.testStyle) draft.test.testConfig.testStyle = newTestConfig.testStyle;
                 if(newTestConfig.durationTimePerQuestions) draft.test.testConfig.durationTimePerQuestions = newTestConfig.durationTimePerQuestions;
             }));
+        },
+        cleanupTimers: () => {
+            const currentQuestionnaire = get().test.questionnaire;
+
+            // unsubscribe SOFT timers if necessary
+            if(currentQuestionnaire?.testSoftSubscription) currentQuestionnaire.testSoftSubscription.unsubscribe();
+
+            // unsubscribe HARD timers if necessary
+            if(currentQuestionnaire?.testHardHandler) currentQuestionnaire.testHardHandler.subscription.unsubscribe();
         }
     }
 }))

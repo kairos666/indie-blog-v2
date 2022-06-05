@@ -37,7 +37,7 @@ const QuestionnaireConfigurator:FC<QuestionnaireConfiguratorProps> = ({ onCancel
                     <h4 id="test-mode-selector">Limite de temps du questionnaire</h4>
                     <button type="button" className={ styles['qcf-SelectorBtn'] } role="radio" aria-checked={ (testMode === "NO_TIME_LIMIT") } aria-labelledby="choice-NO_TIME_LIMIT" onClick={ () => changeTestConfig({ testMode: "NO_TIME_LIMIT" }) }><span id="choice-NO_TIME_LIMIT">{ testConfigLabels("NO_TIME_LIMIT") }</span></button>
                     <button type="button" className={ styles['qcf-SelectorBtn'] } role="radio" aria-checked={ (testMode === "SOFT_TIME_LIMIT") } aria-labelledby="choice-SOFT_TIME_LIMIT" onClick={ () => changeTestConfig({ testMode: "SOFT_TIME_LIMIT" }) }><span id="choice-SOFT_TIME_LIMIT">{ testConfigLabels("SOFT_TIME_LIMIT") }</span></button>
-                    <button type="button" className={ styles['qcf-SelectorBtn'] } disabled role="radio" aria-checked={ (testMode === "HARD_TIME_LIMIT") } aria-labelledby="choice-HARD_TIME_LIMIT" onClick={ () => changeTestConfig({ testMode: "HARD_TIME_LIMIT" }) }><span id="choice-HARD_TIME_LIMIT">{ testConfigLabels("HARD_TIME_LIMIT") }</span></button>
+                    <button type="button" className={ styles['qcf-SelectorBtn'] } role="radio" aria-checked={ (testMode === "HARD_TIME_LIMIT") } aria-labelledby="choice-HARD_TIME_LIMIT" onClick={ () => changeTestConfig({ testMode: "HARD_TIME_LIMIT" }) }><span id="choice-HARD_TIME_LIMIT">{ testConfigLabels("HARD_TIME_LIMIT") }</span></button>
                 </section>
             </div>
             <div className={ styles['qcf-ModalActions'] } role="group" aria-label="Actions liées à la configuration du test">
