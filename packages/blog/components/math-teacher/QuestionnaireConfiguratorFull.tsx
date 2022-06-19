@@ -2,13 +2,11 @@ import { FC } from 'react';
 import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
 import { testConfigLabels } from '../../utils/Enum2LabelConverters';
 import MultiplicationTablesSelector from './MultiplicationTablesSelector';
-import styles from './QuestionnaireConfigurator.module.scss';
+import styles from './QuestionnaireConfiguratorFull.module.scss';
 
-type QuestionnaireConfiguratorProps = {
-    onCancelConfigurator: () => void
-};
+type QuestionnaireConfiguratorFullProps = {};
 
-const QuestionnaireConfigurator:FC<QuestionnaireConfiguratorProps> = ({ onCancelConfigurator }) => {
+const QuestionnaireConfiguratorFull:FC<QuestionnaireConfiguratorFullProps> = () => {
     const { currentlySelectedTables, testStyle, testMode, availableTables, toggleSelectedTable, changeTestConfig, startTest } = useMathTeacherState(state => ({
         currentlySelectedTables: state.test.testConfig.selectedTables,
         testStyle: state.test.testConfig.testStyle,
@@ -20,7 +18,7 @@ const QuestionnaireConfigurator:FC<QuestionnaireConfiguratorProps> = ({ onCancel
     }));
 
     return (
-        <form className={ styles['qcf-Form'] } onSubmit={ evt => evt.preventDefault() }>
+        <form className={ styles['qcf-Form'] } onSubmit={ evt => { evt.preventDefault(); startTest() } }>
             <h1 className={ styles['qcf-ModalTitle'] }>Configurer le test</h1>
             <div data-wrapper="form-control">
                 <section className={ styles['qcf-FormSection'] }>
@@ -41,11 +39,15 @@ const QuestionnaireConfigurator:FC<QuestionnaireConfiguratorProps> = ({ onCancel
                 </section>
             </div>
             <div className={ styles['qcf-ModalActions'] } role="group" aria-label="Actions liées à la configuration du test">
-                <button type="button" onClick={ () => { onCancelConfigurator(); startTest() } }>Démarrer le test</button>
-                <button type="button" onClick={ onCancelConfigurator }>Fermer le configurateur</button>
+                <button 
+                    className={ styles['qcf-BtnSubmit'] }
+                    type="submit" 
+                    disabled={ (currentlySelectedTables.length === 0) } 
+                    title={ (currentlySelectedTables.length === 0) ? `Il faut d'abord sélectionner au moins une table de multiplication` : `Lancer le test avec la configuration ci-dessus` }  
+                >Démarrer le test</button>
             </div>
         </form>
     )
 }
 
-export default QuestionnaireConfigurator;
+export default QuestionnaireConfiguratorFull;

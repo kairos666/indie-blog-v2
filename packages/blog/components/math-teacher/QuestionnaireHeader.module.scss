@@ -73,8 +73,8 @@
     text-align: center;
     padding: 0 $xs-gutter;
 
-    dd[data-disabled="true"] & {
-        background-color: rgba($app-accent-color, 0.25);
+    &.qh-Entry--required {
+        background-color: $color-danger;
     }
 }
 

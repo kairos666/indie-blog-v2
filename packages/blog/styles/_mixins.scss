@@ -48,6 +48,13 @@
         color: white;
         background-color: $app-accent-color;
     }
+
+    &:disabled {
+        color: $color-disabled;
+        background-color: transparent;
+        border-color: $color-disabled;
+        cursor: not-allowed;
+    }
 }
 
 @mixin GenericFormStyles {

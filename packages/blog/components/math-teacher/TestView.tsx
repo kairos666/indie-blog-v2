@@ -1,7 +1,6 @@
 import { FC, ReactNode, useCallback, useEffect } from 'react';
 import { useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
 import Questionnaire from './Questionnaire';
-import QuestionnaireConfigurator from './QuestionnaireConfigurator';
 import QuestionnaireHeader from './QuestionnaireHeader';
 import styles from './TestView.module.scss';
 
@@ -10,10 +9,9 @@ type TestViewProps = {
 };
 
 const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
-    const { testState, testConfig, canChangeTestConfig } = useMathTeacherState(state => ({
+    const { testState, testConfig } = useMathTeacherState(state => ({
         testState: state.test.testState,
-        testConfig: state.test.testConfig,
-        canChangeTestConfig: (state.test.testState === "PRE_TEST")
+        testConfig: state.test.testConfig
     }));
     const { startTest, forfeitTest, resetTest } = useMathTeacherState(state => ({
         startTest: state.test.startTest,
@@ -24,12 +22,8 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
     }));
     const testQuestionary = useMathTeacherState(state => state.test.questionnaire);
 
-    const startTestHandler = useCallback(() => { displayDetailHandler(null); startTest(); }, [startTest, displayDetailHandler]);
     const cancelTestHandler = useCallback(() => { displayDetailHandler(null); forfeitTest(); }, [forfeitTest, displayDetailHandler]);
     const resetTestHandler = useCallback(() => { displayDetailHandler(null); resetTest(); }, [resetTest, displayDetailHandler]);
-    const triggerTestConfigSetupHandler = useCallback(() => {
-        displayDetailHandler(<QuestionnaireConfigurator onCancelConfigurator={ () => displayDetailHandler(null) } />);
-    }, [displayDetailHandler]);
 
     // ensure details removal when unmounting
     useEffect(() => {
@@ -39,18 +33,11 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
     return (
         <article className={ styles['tv-TestLayout'] }>
             <QuestionnaireHeader 
-                canChangeTestConfig={ canChangeTestConfig } 
                 testState={ testState } 
                 testConfig={ testConfig } 
-                testQuestionary={ testQuestionary } 
-                triggerTestSetupHandler={ triggerTestConfigSetupHandler }
+                testQuestionary={ testQuestionary }
             >
-                { (testState === "PRE_TEST") 
-                    ?   <>
-                            <button type="button" className={ styles['tv-testBtn'] } onClick={ startTestHandler }>Démarrer</button>
-                            <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ triggerTestConfigSetupHandler }>Configurer</button>
-                        </> 
-                    : (testState === "RUN_TEST")
+                { (testState === "RUN_TEST")
                     ?   <button type="button" className={ [styles['tv-testBtn'], styles['tv-testBtn--secondary']].join(' ') } onClick={ cancelTestHandler }>Abandonner</button>
                     : (testState === "TEST_RESULTS")
                     ?   <button type="button" className={ styles['tv-testBtn'] } onClick={ resetTestHandler }>Retour</button>

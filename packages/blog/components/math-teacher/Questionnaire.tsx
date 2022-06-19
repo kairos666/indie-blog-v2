@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { TestQuestionary, useMathTeacherState } from '../../state-managers-hooks/match-teacher/useMathTeacherState';
 import { MTableMultipleChoicesQuestionEntry } from 'kai-multiplication-table-teacher/types/types';
 import styles from './Questionnaire.module.scss';
+import QuestionnaireConfiguratorFull from './QuestionnaireConfiguratorFull';
 
 type QuestionnaireProps = {};
 
@@ -39,7 +40,9 @@ const Questionnaire:FC<QuestionnaireProps> = () => {
         default:
             return (
                 <aside className={ styles['q-EmptyState'] }>
-                    <p>Avant de démarrer, clique sur "Configurer"<br />Ensuite, pour lancer le test, clique "Démarrer"</p>
+                    <div className={ styles['q-EmptyStateInner'] }>
+                        <QuestionnaireConfiguratorFull />
+                    </div>
                 </aside>
             )
     }
