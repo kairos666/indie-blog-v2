@@ -24,7 +24,7 @@ const QuestionnaireProgress:FC<QuestionnaireProgressProps> = () => {
             refElt.offsetWidth; // trigger browser reflow
             refElt.classList.add(styles['qp-ProgressTimerCursor'])
         }
-    }, [questionProgress]);
+    }, [questionProgress, testConfig.testMode]);
 
     switch(testConfig.testMode) {
         case "HARD_TIME_LIMIT":

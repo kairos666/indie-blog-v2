@@ -133,7 +133,7 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
         case "partial-win":
             return (
                 <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
-                    <header className={ styles["q-Results_Head"] }><p>Bravo! C'est presque parfait, seulement <span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' }.</p></header>
+                    <header className={ styles["q-Results_Head"] }><p>Bravo! C&apos;est presque parfait, seulement <span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' }.</p></header>
                 </section>
             );
 
@@ -141,7 +141,7 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
             return (
                 <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
                     <header className={ styles["q-Results_Head"] }>
-                        <p>Pas trop mal! Encore quelques efforts, tu fais un peu trop d'erreurs encore.</p>
+                        <p>Pas trop mal! Encore quelques efforts, tu fais un peu trop d&apos;erreurs encore.</p>
                         <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' } commises sur { questionsCount } questions.</p>
                         <p>Il te faut encore réviser tes tables de multiplications.</p>
                     </header>
@@ -163,7 +163,7 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
                 <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
                     <header className={ styles["q-Results_Head"] }>
                         <p>Test raté!</p>
-                        <p>Tu as pris trop de temps pour répondre c'est dommage!</p>
+                        <p>Tu as pris trop de temps pour répondre c&apos;est dommage!</p>
                         <p><span className={ styles["q-Results_ValidCount"] }>{ validAnswersCount }</span> réponse{ (validAnswersCount > 1) ? 's' : '' } correcte{ (validAnswersCount > 1) ? 's' : '' }</p>
                         <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' }</p>
                         <p>{ answeredQuestionsCount } question{ (answeredQuestionsCount > 1) ? 's' : '' } répondue{ (answeredQuestionsCount > 1) ? 's' : '' } sur { questionsCount }</p>
@@ -175,7 +175,7 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
             return (
                 <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
                     <header className={ styles["q-Results_Head"] }>
-                        <p>Ce n'est pas suffisant! Encore quelques efforts, tu fais trop d'erreurs pour le moment.</p>
+                        <p>Ce n&apos;est pas suffisant! Encore quelques efforts, tu fais trop d&apos;erreurs pour le moment.</p>
                         <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' } commises sur { questionsCount } questions.</p>
                         <p>Il te faut encore réviser tes tables de multiplications.</p>
                     </header>

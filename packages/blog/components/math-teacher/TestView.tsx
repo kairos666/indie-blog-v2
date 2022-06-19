@@ -13,8 +13,7 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
         testState: state.test.testState,
         testConfig: state.test.testConfig
     }));
-    const { startTest, forfeitTest, resetTest } = useMathTeacherState(state => ({
-        startTest: state.test.startTest,
+    const { forfeitTest, resetTest } = useMathTeacherState(state => ({
         forfeitTest: state.test.forfeitTest,
         resetTest: state.test.resetTest,
         toggleSelectedTable: state.test.toggleSelectedTable,
@@ -28,7 +27,7 @@ const TestView:FC<TestViewProps> = ({ displayDetailHandler }) => {
     // ensure details removal when unmounting
     useEffect(() => {
         return () => displayDetailHandler(null)
-    }, []);
+    }, [displayDetailHandler]);
 
     return (
         <article className={ styles['tv-TestLayout'] }>
