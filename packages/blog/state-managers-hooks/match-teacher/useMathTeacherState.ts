@@ -142,7 +142,6 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                     // setup SOFT timer
                     const softTimerObservable = testSoftTimerObservableBuilder(generatedQuestions.length, currentState.test.testConfig.durationTimePerQuestions);
                     draft.test.questionnaire.testSoftSubscription = softTimerObservable.subscribe({ complete: () => {
-                        console.log("test soft time limit reached");
                         get().test.timeoutTest();
                     }});
                 } else if(currentTestMode === "HARD_TIME_LIMIT") {
@@ -150,7 +149,6 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                     const { observable: hardTimerObservable, answerRegisterCb } = testHardTimerObservableBuilder(generatedQuestions.length, currentState.test.testConfig.durationTimePerQuestions);
                     const testHardSubscription = hardTimerObservable.subscribe({
                         next: () => {
-                            console.log("individual question time out");
                             get().test.answerQuestion({ correctAnswer: false, answerTimestamp: new Date().getTime(), userAnswer: NaN }); // automatically push a wrong answer
                         }
                     });
@@ -233,7 +231,7 @@ export const useMathTeacherState = create<MathTeacherState>((set, get) => ({
                 ? currentState?.test?.questionnaire?.testHardHandler.answerRegisterCb
                 : false;
             const answerIsLastOneFromTest:boolean = ((currentState.test.questionnaire.results.length + 1) >= currentState.test.questionnaire.questions.length);
-            
+
             // ensure not pointing to inexistant question at end of test
             const nextQuestionIndex:number = (answerIsLastOneFromTest)
                 ? currentState.test.questionnaire.questions.length - 1

@@ -39,7 +39,7 @@ $progress-bar-bg-color: white;
         transition: width .2s ease;
     }
 
-    .qp-ProgressTimerCursor {
+    &.qp-ProgressBar--soft .qp-ProgressTimerCursor {
         position:absolute;
         z-index:9;
         top:0;
@@ -47,7 +47,19 @@ $progress-bar-bg-color: white;
         bottom:0;
         border-radius: 0.5 * $progress-bar-height;
         //will-change: width; uncomment in case of performance issues
-        animation: full-test-timer-animation-timeline var(--soft-time-limit) 2s 1 linear forwards; // duraction delay iterations final-state-handling
+        animation: full-test-timer-animation-timeline var(--soft-time-limit) 1.5s 1 linear forwards; // duraction delay iterations final-state-handling
+    }
+
+    &.qp-ProgressBar--hard .qp-ProgressTimerCursor {
+        position:absolute;
+        z-index:9;
+        top:0;
+        left:0;
+        bottom:0;
+        border-radius: 0.5 * $progress-bar-height;
+        //will-change: width; uncomment in case of performance issues
+        animation: question-timer-animation-timeline var(--hard-time-limit) 0s 1 linear forwards; // duraction delay iterations final-state-handling
+        animation-iteration-count: var(--questions-count);
     }
 }
 
@@ -56,4 +68,11 @@ $progress-bar-bg-color: white;
     60%   { background-color: color.adjust(teal, $saturation: 50%); }
     75%   { background-color: $color-danger; }
     100%  { width: unquote("calc(100% + #{ 0.3 * $progress-bar-height })"); background-color: color.adjust($color-danger, $saturation: 50%); }
+}
+
+@keyframes question-timer-animation-timeline {
+    0%    { width: unquote("calc(var(--question-cursor-progress) + #{ 0.3 * $progress-bar-height })"); background-color: color.adjust(teal, $saturation: 0); }
+    60%   { background-color: color.adjust(teal, $saturation: 50%); }
+    75%   { background-color: $color-danger; }
+    100%  { width: unquote("calc(var(--question-cursor-progress) + (100% / var(--questions-count)) + #{ 0.3 * $progress-bar-height })"); background-color: color.adjust($color-danger, $saturation: 50%); }
 }
