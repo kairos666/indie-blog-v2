@@ -37,9 +37,9 @@ const AppFrame:FC<AppFrameProps> = ({ desktopBreakpoint, children }) => {
     Children.forEach(children, (child:ReactNode) => {
         switch(true) {
             // group all ActionMenu together
-            case ((child as any)?.type?.name === 'ActionMenu'): actionMenu.push(child); break;
+            case ((child as any)?.type?.displayName === 'ActionMenu'): actionMenu.push(child); break;
             // group all Detail together
-            case ((child as any)?.type?.name === 'Detail'): detailModal.push(child); break;
+            case ((child as any)?.type?.displayName === 'Detail'): detailModal.push(child); break;
             // group all other children together
             default:
                 regularChildren.push(child);
@@ -98,8 +98,9 @@ export default AppFrame;
  * act has tab menu on mobile bottom of screen
  */
 type ActionMenuProps = {}
-
-export const ActionMenu:FC<ActionMenuProps> = ({ children }) => <>{ children }</>
+const ActionMenuFC:FC<ActionMenuProps> = ({ children }) => <>{ children }</>
+ActionMenuFC.displayName = 'ActionMenu'; // force uglifier to keep full cmpnt name in prod build
+export const ActionMenu = ActionMenuFC;
 
 /**
  * DETAIL
@@ -108,5 +109,6 @@ export const ActionMenu:FC<ActionMenuProps> = ({ children }) => <>{ children }</
  * acts as modal window on mobile
  */
  type DetailProps = {}
-
- export const Detail:FC<DetailProps> = ({ children }) => <>{ children }</>
+ const DetailFC:FC<DetailProps> = ({ children }) => <>{ children }</>
+ DetailFC.displayName = 'Detail'; // force uglifier to keep full cmpnt name in prod build
+ export const Detail = DetailFC;
