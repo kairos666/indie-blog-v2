@@ -1,4 +1,5 @@
 import { FC, FormEvent, MouseEvent, useCallback } from 'react';
+import Image from '../ui-elements/Image';
 import style from './CreatePlayerForm.module.scss';
 
 type CreatePlayerFormProps = {
@@ -35,7 +36,7 @@ const CreatePlayerForm:FC<CreatePlayerFormProps> = ({ onSubmit, onCancel }) => {
 
     return (
         <form className={ style['cpf-Form'] } onSubmit={ onSubmitPlayer }>
-            <h1 className={ style['cpf-ModalTitle'] }><img src="/svg/undraw_handcrafts_user.svg" width="30" height="30" />Création d'un nouveau joueur</h1>
+            <h1 className={ style['cpf-ModalTitle'] }><Image alt="" src="/svg/undraw_handcrafts_user.svg" width="30" height="30" />Création d&apos;un nouveau joueur</h1>
             <div data-wrapper="form-control">
                 <label htmlFor="player-info-name">Nom du joueur</label>
                 <input type="text" id="player-info-name" name="name" required />

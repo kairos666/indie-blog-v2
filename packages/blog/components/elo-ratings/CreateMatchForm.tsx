@@ -1,5 +1,6 @@
 import { Player } from 'kai-elo-rating/types/types';
 import { FC, FormEvent, useCallback, useState, MouseEvent } from 'react';
+import Image from '../ui-elements/Image';
 import style from './CreateMatchForm.module.scss';
 
 type CreateMatchFormProps = {
@@ -52,7 +53,7 @@ const CreateMatchForm:FC<CreateMatchFormProps> = ({ players, onSubmit, onCancel 
         if(submitter && submitter.getAttribute("data-case") === "once") onCancel();
 
         // otherwise, rerender will directly retrigger modal
-    }, [onSubmit]);
+    }, [onSubmit, onCancel]);
 
     const onCancelMatch = useCallback((evt:MouseEvent) => {
         evt.preventDefault();
@@ -61,7 +62,7 @@ const CreateMatchForm:FC<CreateMatchFormProps> = ({ players, onSubmit, onCancel 
 
     return (
         <form className={ style['cmf-Form'] } onSubmit={ onSubmitMatch }>
-            <h1 className={ style['cmf-ModalTitle'] }><img src="/svg/undraw_handcrafts_exclamation_mark.svg" width="30" height="30" />Création d'un nouveau match</h1>
+            <h1 className={ style['cmf-ModalTitle'] }><Image alt="" src="/svg/undraw_handcrafts_exclamation_mark.svg" width="30" height="30" />Création d&apos;un nouveau match</h1>
             <fieldset>
                 <legend>Joueurs du match</legend>
                 <div data-wrapper="form-control">

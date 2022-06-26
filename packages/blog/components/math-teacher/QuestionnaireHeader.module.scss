@@ -1,0 +1,93 @@
+@use "sass:math";
+@import "variables";
+@import "mixins";
+@import "include-media-mixins";
+
+.qh-Header {
+
+}
+
+.qh-Header_SubContainer {
+    padding: $gutter;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $gutter;
+    &.qh-Header_SubContainer--test-config {
+        background-color: rgba($app-shadow-color, 0.35);
+    }
+    &.qh-Header_SubContainer--test-setup,
+    &.qh-Header_SubContainer--test-proceeding,
+    &.qh-Header_SubContainer--test-results {
+        background-color: rgba($app-shadow-color, 0.15);
+
+        p { margin-block: 0; }
+        menu {
+            padding-inline-start: 0;
+            margin-block: 0;
+            margin-inline-start: auto;
+            display:flex;
+            flex-wrap: wrap;
+            gap: $gutter;
+        }
+    }
+}
+
+.qh-Setting {
+    flex:0 1 auto;
+    margin-block: 0;
+
+    dd {
+        display: inline-block;
+        margin-inline-start: 0;
+        margin-block-start: $sm-gutter;
+        padding-inline: $xs-gutter;
+        background-color: $app-accent-color;
+        color: white;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        cursor: pointer;
+
+        &[data-disabled="true"] {
+            background-color: rgba($app-accent-color, 0.25);
+            cursor: not-allowed;
+        }
+    }
+
+    &.qh-Setting--mono-value {}
+    &.qh-Setting--multi-value dd {
+        background-color: transparent;
+        border-radius: 0;
+        padding-inline: 0;
+
+        *:not(:first-child) {
+            margin-inline-start: $xs-gutter;
+        }
+    }
+}
+
+.qh-Entry {
+    display: inline-block;
+    background-color: $app-accent-color;
+    border-radius: 0.25rem;
+    text-align: center;
+    padding: 0 $xs-gutter;
+
+    &.qh-Entry--required {
+        background-color: $color-danger;
+    }
+}
+
+.qh-ConfigSetupTriggerBtn {
+    @include GenericButtonStyles;
+    &:hover, &:focus {
+        background-color: rgba($app-accent-color, 0.25);
+    }
+    &:active {
+        background-color: $app-accent-color;
+    }
+
+    @include media("<=small") {
+        padding: $gutter;
+    }
+}

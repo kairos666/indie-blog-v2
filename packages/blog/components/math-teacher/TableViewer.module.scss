@@ -1,0 +1,124 @@
+@import "variables";
+@import "mixins";
+@import "include-media-mixins";
+
+.tv-EmptyState {
+    p {
+        font-weight: 700;
+        font-size: 2.5rem;
+        text-align: center;
+        margin:$xl-gutter;
+        padding: $gutter;
+        border:1px solid $app-accent-color;
+        border-radius: 0.25rem;
+    }
+
+    &:before {
+        content: '';
+        position: absolute;
+        width:100vw;
+        height:50vh;
+        bottom:0;
+        left:0;
+        background: no-repeat url("/math-teacher/img/cookie-monster-pointing-up.png") 0 100%;
+        background-size: contain;
+    }
+
+    @include media("<=small") {
+        p {
+            margin:$gutter;
+            font-size: 1.5rem;
+        }
+
+        &:before {
+            background-position: -20vw 100%;
+        }
+    }
+}
+
+.tv-TablesContainer {
+    .tv-TableCard:first-child {
+        margin-block-start:0;
+    }
+}
+
+.tv-TableCard {
+    padding: 0;
+    margin: $lg-gutter 0;
+    position: relative;
+
+    @include media(">small") {
+        margin:$xl-gutter auto;
+    }
+}
+
+.tv-TableCard_Header {
+    background-color: mix($app-accent-color, white, 25%);
+    padding: $gutter;
+
+    h1 { 
+        margin:0;
+        text-align:center;
+        font-weight: normal;
+        font-size: 2rem;
+    }
+
+    @include media("<=small") {
+        position: sticky;
+        z-index: 11;
+        top: 0;
+
+        h1 { 
+            font-weight: 500;
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.tv-TableCard_List {
+    list-style:none;
+    padding: $sm-gutter;
+    margin-inline: $gutter;
+
+    @include media("<=small") {
+        display: inline-block;
+        position:relative;
+        left:50%;
+        transform: translateX(-50%);
+    }
+
+    @include media(">small") {
+        columns: 2;
+        column-rule: 1px solid black;
+        column-gap: $xl-gutter;
+
+        li {
+            padding-block: $xs-gutter;
+        }
+
+        .tv-TableCard_ListEntry--first-half {
+            text-align: right;
+        }
+        .tv-TableCard_ListEntry--second-half {
+            text-align: left;
+        }
+    }
+
+    .tv-TableCard_ListEntry {
+        font-family: monospace;
+    }
+
+    .tv-TableCard_Calculus {
+        font-size: 3em;
+        white-space: pre-wrap;
+    }
+
+    .tv-TableCard_Equal {
+        font-size: 2.5em;
+    }
+
+    .tv-TableCard_Result {
+        font-size:3em;
+        white-space: pre-wrap;
+    }
+}

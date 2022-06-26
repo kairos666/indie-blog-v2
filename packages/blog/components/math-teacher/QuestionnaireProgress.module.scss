@@ -1,0 +1,78 @@
+@use "sass:color";
+@import "variables";
+@import "mixins";
+@import "include-media-mixins";
+
+$progress-bar-height: 1.5rem;
+$progress-bar-border-thickness: 2px;
+$progress-bar-bg-color: white;
+
+.qp-ProgressBar {
+    position:relative;
+    display:block;
+    margin:0;
+    background-color: $progress-bar-bg-color;
+    height: $progress-bar-height;
+    flex:9999999999 1 auto;
+    border:$progress-bar-border-thickness solid $progress-bar-bg-color;
+    border-radius: 0.5 * $progress-bar-height;
+
+    &:after {
+        position:absolute;
+        z-index:11;
+        inset: 0 0 0 0;
+        content: '';
+        background: unquote("linear-gradient(90deg, transparent calc(100% - #{ $progress-bar-border-thickness }), #{ $progress-bar-bg-color } 0)");
+        background-size: unquote("calc((100% - var(--questions-count) * #{ $progress-bar-border-thickness }) / var(--questions-count) + #{ $progress-bar-border-thickness }) 100%");
+    }
+
+    .qp-ProgressQuestionCursor {
+        position:absolute;
+        z-index:10;
+        top:0;
+        left:0;
+        bottom:0;
+        width: unquote("calc(var(--question-cursor-progress) + #{ 0.3 * $progress-bar-height })");
+        border-radius: 0.5 * $progress-bar-height;
+        background-color: $app-shadow-color;
+        //will-change: width; uncomment in case of performance issues
+        transition: width .2s ease;
+    }
+
+    &.qp-ProgressBar--soft .qp-ProgressTimerCursor {
+        position:absolute;
+        z-index:9;
+        top:0;
+        left:0;
+        bottom:0;
+        border-radius: 0.5 * $progress-bar-height;
+        //will-change: width; uncomment in case of performance issues
+        animation: full-test-timer-animation-timeline var(--soft-time-limit) 1.5s 1 linear forwards; // duraction delay iterations final-state-handling
+    }
+
+    &.qp-ProgressBar--hard .qp-ProgressTimerCursor {
+        position:absolute;
+        z-index:9;
+        top:0;
+        left:0;
+        bottom:0;
+        border-radius: 0.5 * $progress-bar-height;
+        //will-change: width; uncomment in case of performance issues
+        animation: question-timer-animation-timeline var(--hard-time-limit) 0s 1 linear forwards; // duraction delay iterations final-state-handling
+        animation-iteration-count: var(--questions-count);
+    }
+}
+
+@keyframes full-test-timer-animation-timeline {
+    0%    { width:0; background-color: color.adjust(teal, $saturation: 0); }
+    60%   { background-color: color.adjust(teal, $saturation: 50%); }
+    75%   { background-color: $color-danger; }
+    100%  { width: unquote("calc(100% + #{ 0.3 * $progress-bar-height })"); background-color: color.adjust($color-danger, $saturation: 50%); }
+}
+
+@keyframes question-timer-animation-timeline {
+    0%    { width: unquote("calc(var(--question-cursor-progress) + #{ 0.3 * $progress-bar-height })"); background-color: color.adjust(teal, $saturation: 0); }
+    60%   { background-color: color.adjust(teal, $saturation: 50%); }
+    75%   { background-color: $color-danger; }
+    100%  { width: unquote("calc(var(--question-cursor-progress) + (100% / var(--questions-count)) + #{ 0.3 * $progress-bar-height })"); background-color: color.adjust($color-danger, $saturation: 50%); }
+}

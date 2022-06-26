@@ -30,7 +30,7 @@ type AppFrameProps = {
 const AppFrame:FC<AppFrameProps> = ({ desktopBreakpoint, children }) => {
     const isDesktop = useBreakpointMatcher(windowWidth => desktopBreakpoint <= windowWidth);
 
-    // each time children chang, rerender with separating children accordingly
+    // each time children change, rerender with separating children accordingly
     let actionMenu:ReactNode[] = [];
     let detailModal:ReactNode[] = [];
     let regularChildren:ReactNode[] = [];
