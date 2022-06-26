@@ -194,3 +194,34 @@
         background-size: 15%;
     }
 }
+
+.q-Results_ErrorSummary {
+    font-family: monospace;
+    list-style: none;
+    width: min(960px, unquote("calc(100% - #{ 2 * $gutter })"));
+    margin:0 auto;
+    padding: $gutter;
+    background-color: rgba(white, 0.75);
+
+    @include media(">small") {
+        columns: 4;
+        column-gap: $lg-gutter;
+    }
+
+    li { text-align: center; }
+}
+
+.q-Results_Calculus {
+    font-size: 1.5em;
+    white-space: pre-wrap;
+}
+
+.q-Results_Equal {
+    font-size: 1.2em;
+}
+
+.q-Results_Result {
+    font-size:1.5em;
+    white-space: pre-wrap;
+    color: $color-danger;
+}

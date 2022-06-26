@@ -100,16 +100,24 @@ export const TestQuestionMultiChoices:FC<TestQuestionMultiChoicesProps> = ({ que
     )
 }
 
+export const ErrorDisplay:FC<{ errorDescriptor:{ calculus:string, correctAnswer:number, userWrongAnswer:number } }> = ({ errorDescriptor }) => {
+    return (
+        <>
+            <span className={ styles['q-Results_Calculus'] }>{ errorDescriptor.calculus } </span>
+            <span className={ styles['q-Results_Equal'] }>=</span>
+            <span className={ styles['q-Results_Result'] }> { errorDescriptor.userWrongAnswer }</span>
+        </>
+    )
+}
+
 type TestResultsProps = {
     questionnaire: TestQuestionary
 }
 
 export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
     const winRatio = Math.round(100 * questionnaire.results.filter(result => result.correctAnswer).length / questionnaire.results.length);
-    const errorCount:number = questionnaire.results.filter(result => !result.correctAnswer).length;
     const questionsCount:number = questionnaire.questions.length;
     const answeredQuestionsCount:number = questionnaire.results.length;
-    const validAnswersCount:number = answeredQuestionsCount - errorCount;
     const resultGlobalState:"full-win"|"partial-win"|"average-win"|"loss"|"timeout"|"abandonned-game" = (questionnaire.overallResult === "forfeit")
         ? "abandonned-game"
         : (questionnaire.overallResult === "timeout")
@@ -121,6 +129,15 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
         : (winRatio >= 65)
         ? "average-win"
         : "loss";
+
+    // error descriptors
+    const errorDescriptors:{ calculus:string, correctAnswer:number, userWrongAnswer:number }[] = questionnaire.questions.map((question, index) => {
+        const matchingAnswer = questionnaire.results[index];
+
+        return { calculus: `${question.mainParam} x ${question.multiplicator}`, correctAnswer: question.result, userWrongAnswer: matchingAnswer.userAnswer }
+    }).filter(errorDescriptor => (errorDescriptor.correctAnswer !== errorDescriptor.userWrongAnswer));
+    const errorCount:number = errorDescriptors.length;
+    const validAnswersCount:number = answeredQuestionsCount - errorCount;
 
     switch(resultGlobalState) {
         case "full-win":
@@ -134,6 +151,9 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
             return (
                 <section className={ [styles['q-Results'], styles[`q-Results--${ resultGlobalState }`]].join(' ') }>
                     <header className={ styles["q-Results_Head"] }><p>Bravo! C&apos;est presque parfait, seulement <span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' }.</p></header>
+                    <ul className={ styles['q-Results_ErrorSummary'] }>
+                        { errorDescriptors.map(error => <li key={ error.calculus }><ErrorDisplay errorDescriptor={ error } /></li>) }
+                    </ul>
                 </section>
             );
 
@@ -145,6 +165,9 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
                         <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' } commises sur { questionsCount } questions.</p>
                         <p>Il te faut encore réviser tes tables de multiplications.</p>
                     </header>
+                    <ul className={ styles['q-Results_ErrorSummary'] }>
+                        { errorDescriptors.map(error => <li key={ error.calculus }><ErrorDisplay errorDescriptor={ error } /></li>) }
+                    </ul>
                 </section>
             );
 
@@ -168,6 +191,9 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
                         <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' }</p>
                         <p>{ answeredQuestionsCount } question{ (answeredQuestionsCount > 1) ? 's' : '' } répondue{ (answeredQuestionsCount > 1) ? 's' : '' } sur { questionsCount }</p>
                     </header>
+                    <ul className={ styles['q-Results_ErrorSummary'] }>
+                        { errorDescriptors.map(error => <li key={ error.calculus }><ErrorDisplay errorDescriptor={ error } /></li>) }
+                    </ul>
                 </section>
             );
 
@@ -179,6 +205,9 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
                         <p><span className={ styles["q-Results_ErrorCount"] }>{ errorCount }</span> erreur{ (errorCount > 1) ? 's' : '' } commises sur { questionsCount } questions.</p>
                         <p>Il te faut encore réviser tes tables de multiplications.</p>
                     </header>
+                    <ul className={ styles['q-Results_ErrorSummary'] }>
+                        { errorDescriptors.map(error => <li key={ error.calculus }><ErrorDisplay errorDescriptor={ error } /></li>) }
+                    </ul>
                 </section>
             );
     }
