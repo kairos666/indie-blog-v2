@@ -31,6 +31,6 @@
     }
 
     @include media("<=small") {
-        padding: $gutter;
+        padding: $sm-gutter $gutter;
     }
 }

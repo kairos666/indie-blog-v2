@@ -1,5 +1,6 @@
 @import "variables";
 @import "mixins";
+@import "include-media-mixins";
 
 .qcf-ModalTitle {
     @include ModalTitle;
@@ -11,12 +12,32 @@
     .qcf-BtnSubmit {
         width: 100%;
         font-size: 1.5rem;
+        color: $app-opposite-accent;
+        border-color:$app-opposite-accent;
+
+        &:hover, &:focus, &:active {
+            color: white;
+            background-color: $app-opposite-accent;
+        }
+
+        &:disabled {
+            color: $color-disabled;
+            background-color: transparent;
+            border-color: $color-disabled;
+            cursor: not-allowed;
+        }
     }
 }
 
 .qcf-ModalActions {
     @include ModalActions;
-    margin-block-start: $xl-gutter;
+
+    @include media("<=small") {
+        margin-block-start: $lg-gutter;
+    }
+    @include media(">small") {
+        margin-block-start: $xl-gutter;
+    }
 }
 
 .qcf-TextMuted {

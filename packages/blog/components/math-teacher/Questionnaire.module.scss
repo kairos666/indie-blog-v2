@@ -127,11 +127,12 @@
         border:1px solid $app-accent-color;
         @include media(">small") {
             margin-block-start: $xl-gutter;
+            margin-block-end: $gutter;
             max-width: 700px;
             margin-inline: auto;
         }
         @include media("<=small") {
-            margin-block-start: $gutter;
+            margin-block: $gutter;
             margin-inline: $gutter;
         }
     }
