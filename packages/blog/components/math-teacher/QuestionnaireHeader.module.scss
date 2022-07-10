@@ -46,12 +46,6 @@
         color: white;
         line-height: 1.5;
         border-radius: 0.25rem;
-        cursor: pointer;
-
-        &[data-disabled="true"] {
-            background-color: rgba($app-accent-color, 0.25);
-            cursor: not-allowed;
-        }
     }
 
     &.qh-Setting--mono-value {}
@@ -64,6 +58,29 @@
             margin-inline-start: $xs-gutter;
         }
     }
+}
+
+.qh-SettingMobile {
+    flex:1 1 auto;
+    margin-block: 0;
+    display:flex;
+    gap: $sm-gutter;
+    span { color: white; fill: $app-accent-color; }
+    span:first-child {
+        // tables list
+        display:flex;
+        gap: $xs-gutter;
+    }
+
+    .qh-SettingMobile--direct-input,
+    .qh-SettingMobile--multiple-choices,
+    .qh-SettingMobile--time {
+        width: 1.2rem;
+        background-color: $app-accent-color;
+    }
+    .qh-SettingMobile--direct-input { mask: url('/math-teacher/svg/keyboard-solid.svg') no-repeat center; }
+    .qh-SettingMobile--multiple-choices { mask: url('/math-teacher/svg/grip-solid.svg') no-repeat center; }
+    .qh-SettingMobile--time { mask: url('/math-teacher/svg/stopwatch-solid.svg') no-repeat center; }
 }
 
 .qh-Entry {
