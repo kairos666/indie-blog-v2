@@ -134,7 +134,7 @@ export const TestResults:FC<TestResultsProps> = ({ questionnaire }) => {
     const errorDescriptors:{ calculus:string, correctAnswer:number, userWrongAnswer:number }[] = questionnaire.questions.map((question, index) => {
         const matchingAnswer = questionnaire.results[index];
 
-        return { calculus: `${question.mainParam} x ${question.multiplicator}`, correctAnswer: question.result, userWrongAnswer: matchingAnswer.userAnswer }
+        return { calculus: `${question.mainParam} x ${question.multiplicator}`, correctAnswer: question.result, userWrongAnswer: matchingAnswer?.userAnswer }
     }).filter(errorDescriptor => (errorDescriptor.correctAnswer !== errorDescriptor.userWrongAnswer));
     const errorCount:number = errorDescriptors.length;
     const validAnswersCount:number = answeredQuestionsCount - errorCount;
